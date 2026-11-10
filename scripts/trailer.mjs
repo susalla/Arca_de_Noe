@@ -158,19 +158,12 @@ filtros.push(`[mix]loudnorm=I=-14:TP=-1.5:LRA=11,aresample=${SR},atrim=0:${D}[sa
 rodar('ffmpeg', ['-y', '-loglevel', 'error', ...entradas, '-filter_complex', filtros.join(';'), '-map', '[saida]', '-ac', '2', TRILHA]);
 
 // ------------------------------------------------------------ 3. Exportar
-const sufixo = narracao ? '' : '-sem-narracao';
-const INSTA = resolve(VIDEOS, `video-01-instagram${sufixo}.mp4`);
-const TIKTOK = resolve(VIDEOS, `video-01-tiktok${sufixo}.mp4`);
-
-// Instagram Reels: 1080x1920, H.264 High, AAC 48 kHz
+// Um único arquivo serve para Instagram Reels e TikTok
+const VIDEO = resolve(VIDEOS, `video-01${narracao ? '' : '-sem-narracao'}.mp4`);
 rodar('ffmpeg', ['-y', '-loglevel', 'error', '-i', IMAGEM, '-i', TRILHA,
-  '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-profile:v', 'high', '-level', '4.1',
+  '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '19', '-profile:v', 'high', '-level', '4.1',
   '-pix_fmt', 'yuv420p', '-r', '30', '-g', '30', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
-  '-movflags', '+faststart', '-shortest', INSTA]);
-
-// TikTok: mesmo formato, arquivo menor (limite de upload no celular)
-rodar('ffmpeg', ['-y', '-loglevel', 'error', '-i', INSTA, '-c:v', 'libx264', '-preset', 'medium', '-crf', '21',
-  '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-movflags', '+faststart', TIKTOK]);
+  '-movflags', '+faststart', '-shortest', VIDEO]);
 
 // Capa: quadro do "sozinho" com título
 const CAPA = resolve(VIDEOS, 'video-01-capa.jpg');
@@ -180,4 +173,4 @@ rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '4.6', '-i', IMAGEM, '-frame
     "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ESTÁ VINDO':fontcolor=white:fontsize=110:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.155",
   '-q:v', '2', CAPA]);
 
-console.log(`\nPronto:\n  ${INSTA}\n  ${TIKTOK}\n  ${CAPA}`);
+console.log(`\nPronto:\n  ${VIDEO}\n  ${CAPA}`);

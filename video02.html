@@ -55,6 +55,14 @@
     #cartao .botao { margin-top: 14px; background: #0095f6; color: #fff; font-weight: 900; font-size: 24px; border-radius: 14px; padding: 11px 0; }
     #cursor { position: absolute; font-size: 50px; left: 315px; top: 445px; opacity: 0; }
 
+    /* Print do comentário com o pedido do animal */
+    #comentario { position: absolute; left: 50%; top: 168px; width: 492px; padding: 12px 14px 10px; opacity: 0;
+      transform: translateX(-50%) scale(0) rotate(-3deg); border-radius: 18px; background: #1b1e23;
+      border: 2px solid rgba(255,255,255,.18); box-shadow: 0 14px 36px rgba(0,0,0,.55); }
+    #comentario .cabeca { display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+      font-size: 13px; font-weight: 800; letter-spacing: .04em; color: #ffd23f; }
+    #comentario img { display: block; width: 100%; border-radius: 6px; }
+    #comentario .bicho { position: absolute; right: -14px; top: -18px; font-size: 42px; transform: rotate(10deg); }
     #recado { position: absolute; left: 40px; right: 64px; top: 560px; text-align: center; opacity: 0;
       padding: 10px 14px; border-radius: 16px; background: rgba(0,0,0,.62); font-weight: 800; font-size: 20px; line-height: 1.25; }
   </style>
@@ -73,6 +81,7 @@
       <div id="progresso"><div class="barra"><div id="barra"></div></div><div class="rotulo" id="progresso-rotulo">ARCA 0%</div></div>
     </div>
     <div id="carimbo">1ª PEÇA DA ARCA ✅</div>
+    <div id="comentario"><div class="cabeca">💬 PEDIDO NOS COMENTÁRIOS</div><img id="comentario-img" alt=""><div class="bicho" id="comentario-bicho"></div></div>
     <div id="recado">7 ajudantes ainda não escolheram o animal… comenta aí 👇</div>
     <div id="legenda"></div>
     <div id="cartao">

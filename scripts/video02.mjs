@@ -1,6 +1,6 @@
 // Monta o vídeo 02 ("Os 10 primeiros ajudantes"): grava a imagem (video02.html),
 // sintetiza trilha e efeitos no ffmpeg sincronizados com js/video02-tempos.js,
-// mixa a narração (audio/video02-narracao.mp3) e exporta Instagram, TikTok e capa.
+// mixa a narração (audio/video02-narracao.mp3) e exporta o vídeo (Instagram e TikTok) e a capa.
 //
 // Uso:
 //   node scripts/narracao.mjs --video=02     # gera a voz (só o que mudou)
@@ -122,6 +122,10 @@ const brilhos = [];
 for (let i = 0; i < 14; i++) brilhos.push([+(H1 - 0.9 + i * 0.09).toFixed(3), 1500 + ((i * 397) % 9) * 260]);
 fonte(aeval(brilhos.map(([h, hz]) => `if(gte(t,${f(h)}),0.5*sin(2*PI*${hz}*(t-${f(h)}))*exp(-(t-${f(h)})*9),0)`).join('+')), 'volume=0.18', 'brilhos');
 
+// "Plim" de notificação quando aparece o print do comentário de cada pedido
+const plins = AJUDANTES.filter((a) => a.animal).map((a) => +(a.pousa + 0.2).toFixed(3));
+fonte(aeval(somaDe(plins, '(0.6*sin(2*PI*1567.98*T)*exp(-T*9)*lt(T,0.09)+0.6*sin(2*PI*2093*(T-0.09))*exp(-(T-0.09)*7)*gte(T,0.09))')), 'volume=0.3', 'plim');
+
 // Torcida no final
 fonte(ruido('pink', 13), `bandpass=f=1200:width_type=q:w=0.6,volume='if(between(t,27.1,29.6),sin(PI*(t-27.1)/2.5)*(0.7+0.3*sin(2*PI*3*t)),0)':eval=frame,volume=0.55`, 'torcida');
 
@@ -154,14 +158,13 @@ filtros.push(`[mix]loudnorm=I=-14:TP=-1.5:LRA=11,aresample=${SR},atrim=0:${D}[sa
 rodar('ffmpeg', ['-y', '-loglevel', 'error', ...entradas, '-filter_complex', filtros.join(';'), '-map', '[saida]', '-ac', '2', TRILHA]);
 
 // ------------------------------------------------------------ 3. Exportar
-const INSTA = resolve(VIDEOS, 'video-02-instagram.mp4');
-const TIKTOK = resolve(VIDEOS, 'video-02-tiktok.mp4');
+// Um único arquivo serve para Instagram Reels e TikTok:
+// 1080x1920, H.264 High, 30 fps, AAC 48 kHz, faststart.
+const VIDEO = resolve(VIDEOS, 'video-02.mp4');
 rodar('ffmpeg', ['-y', '-loglevel', 'error', '-i', IMAGEM, '-i', TRILHA,
-  '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-profile:v', 'high', '-level', '4.1',
+  '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '19', '-profile:v', 'high', '-level', '4.1',
   '-pix_fmt', 'yuv420p', '-r', '30', '-g', '30', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
-  '-movflags', '+faststart', '-shortest', INSTA]);
-rodar('ffmpeg', ['-y', '-loglevel', 'error', '-i', INSTA, '-c:v', 'libx264', '-preset', 'medium', '-crf', '21',
-  '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-ar', '44100', '-movflags', '+faststart', TIKTOK]);
+  '-movflags', '+faststart', '-shortest', VIDEO]);
 
 // Capa: os feixes caindo, com título
 const CAPA = resolve(VIDEOS, 'video-02-capa.jpg');
@@ -172,4 +175,4 @@ rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '8.95', '-i', IMAGEM, '-fram
     `drawtext=fontfile=${fonteTtf}:text='AJUDANTES CHEGARAM':fontcolor=white:fontsize=68:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.72`,
   '-q:v', '2', CAPA]);
 
-console.log(`\nPronto:\n  ${INSTA}\n  ${TIKTOK}\n  ${CAPA}`);
+console.log(`\nPronto:\n  ${VIDEO}\n  ${CAPA}`);

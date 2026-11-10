@@ -69,12 +69,22 @@ Roteiro, gatilhos, texto da narração e legenda do post: [`docs/roteiro-video-0
 npm run video:trailer
 ```
 
-Gera em `videos/`: `video-01-instagram.mp4`, `video-01-tiktok.mp4` e `video-01-capa.jpg`.
+Gera em `videos/`: `video-01.mp4` (o mesmo arquivo serve para Instagram e TikTok) e `video-01-capa.jpg`.
 A trilha e os efeitos (trovão, chuva, marteladas, pops, impacto, coração) são sintetizados no ffmpeg e
 sincronizados com as cenas. Para incluir a voz do Noé, salve a narração em `audio/narracao.mp3` e rode
 `npm run video:trailer:audio` (reaproveita as imagens e só refaz o áudio). A música abaixa sozinha quando ele fala.
 
 Pré-visualização no navegador: http://localhost:8080/trailer.html
+
+## Vídeo 02: "Os 10 primeiros ajudantes"
+
+Roteiro e legenda: [`docs/roteiro-video-02.md`](docs/roteiro-video-02.md). Gere com `npm run video:02`
+(saída: `videos/video-02.mp4` + capa). Cada pedido de animal aparece com o print do comentário de quem pediu
+(`assets/comentarios/`).
+
+**Padrão da série:** um único `.mp4` por vídeo (1080×1920, H.264, AAC 48 kHz) para Instagram e TikTok;
+legenda palavra por palavra, menor e na parte de baixo, fora das áreas cobertas pelos botões do app;
+cada vídeo é um "dia da obra" (o tempo é relativo onde o Noé está).
 
 ## Rodar localmente
 

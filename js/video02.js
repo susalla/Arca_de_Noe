@@ -295,7 +295,32 @@ function hud(c, t) {
   const kcur = ss(t, MARCOS.toque - 0.6, MARCOS.toque - 0.05);
   cur.style.transform = `translate(${lerp(90, 0, kcur)}px, ${lerp(140, 0, kcur)}px) scale(${t > MARCOS.toque - 0.05 && t < MARCOS.toque + 0.15 ? 0.85 : 1})`;
   $('recado').style.opacity = String(ss(t, MARCOS.recado, MARCOS.recado + 0.3));
+
+  // Print do comentário de quem pediu o animal: entra logo depois que ele pousa
+  const card2 = $('comentario');
+  const pedido = COMENTARIOS.find((p) => t >= p.inicio && t < p.fim);
+  if (pedido) {
+    if (card2.dataset.animal !== pedido.animal) {
+      $('comentario-img').src = `assets/comentarios/${pedido.animal}.png`;
+      $('comentario-bicho').textContent = EMOJI[pedido.animal];
+      card2.dataset.animal = pedido.animal;
+    }
+    const e = Math.min(1, (t - pedido.inicio) / 0.28);
+    const sai = ss(t, pedido.fim - 0.25, pedido.fim);
+    const escala = (e < 1 ? 1 - Math.pow(1 - e, 3) + Math.sin(e * Math.PI) * 0.12 : 1) * (1 - sai * 0.3);
+    card2.style.opacity = String(Math.min(1, e * 2) * (1 - sai));
+    card2.style.transform = `translateX(-50%) translateY(${-sai * 30}px) scale(${escala}) rotate(-3deg)`;
+  } else card2.style.opacity = '0';
 }
+
+// Janelas em que aparece o print de cada pedido (do pouso até o fim da cena)
+const COMENTARIOS = AJUDANTES.filter((a) => a.animal).map((a) => {
+  const cena = CENAS.find(([, nome]) => nome === (a.animal === 'onca' ? 'onca' : a.animal));
+  const i = CENAS.indexOf(cena);
+  return { animal: a.animal, inicio: a.pousa + 0.2, fim: (CENAS[i + 1]?.[0] ?? DURACAO) - 0.1 };
+});
+// Pré-carrega os prints para não "piscar" na gravação
+const PRINTS_PRONTOS = Promise.all(COMENTARIOS.map((c) => new Promise((ok) => { const img = new Image(); img.onload = img.onerror = ok; img.src = `assets/comentarios/${c.animal}.png`; })));
 
 // ------------------------------------------------------------ Quadro
 let cenaAtual = -1;
@@ -357,7 +382,7 @@ function renderizarEm(t) {
       // Nos closes dos animais só aparece o @ do dono; nos planos abertos, todos
       const foco = { jacare: 0, onca: 8 }[c.nome];
       let fator = 1;
-      if (foco !== undefined) fator = f.dados.vaga === foco ? 0.5 : 0;
+      if (foco !== undefined) fator = 0; // nos closes, o card com o print do comentário mostra o nome
       else if (c.nome === 'construcao') fator = t > 21.0 ? 1.6 : 0;
       else if (c.nome === 'holograma') fator = 0;
       f.rotulo.visible = ke > 0.01 && fator > 0;
@@ -446,6 +471,7 @@ function renderizarEm(t) {
 window.__duracao = DURACAO;
 window.__renderizarEm = renderizarEm;
 renderizarEm(0);
+await PRINTS_PRONTOS;
 window.__pronto = true;
 
 if (!new URLSearchParams(location.search).has('gravando')) {
