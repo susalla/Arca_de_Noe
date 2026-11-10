@@ -26,9 +26,10 @@
       font-weight: 800; font-size: 21px; letter-spacing: .04em; border: 2px solid rgba(255,255,255,.25); }
     #etiqueta.alerta { background: rgba(160, 20, 20, .8); }
 
-    #legenda { position: absolute; left: 34px; right: 34px; top: 585px; text-align: center;
-      font-weight: 900; font-size: 38px; line-height: 1.12; text-transform: uppercase;
-      paint-order: stroke fill; -webkit-text-stroke: 9px #000; letter-spacing: .01em; }
+    /* Legenda menor e mais baixa, fora das áreas cobertas pelo app (direita e rodapé) */
+    #legenda { position: absolute; left: 36px; right: 64px; top: 668px; text-align: center;
+      font-weight: 900; font-size: 30px; line-height: 1.14; text-transform: uppercase;
+      paint-order: stroke fill; -webkit-text-stroke: 7px #000; }
     #legenda .p { display: inline-block; margin: 0 .13em; }
     #legenda .em { color: var(--amarelo); }
 

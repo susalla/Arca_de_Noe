@@ -1,9 +1,25 @@
 {
-  "dia": 1,
+  "dia": 2,
   "perfil": "@arca_do_noee",
-  "seguidores": 0,
+  "seguidores": 10,
   "seguidoresOntem": 0,
   "meta": 10000,
-  "novosAjudantes": [],
-  "animais": []
+  "novosAjudantes": [
+    "@ra.fa_3008",
+    "@bn_rlk_.00",
+    "@rosangelacosta5123",
+    "@vih.vieira13",
+    "@afonso_sossio",
+    "@mariana_cardeal82",
+    "@lima__pedro17",
+    "@chiarellizim",
+    "@elcilenebarroso",
+    "@juli.ano15c"
+  ],
+  "animais": [
+    "jacare",
+    "onca",
+    "elefante"
+  ],
+  "animaisOntem": []
 }

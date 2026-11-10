@@ -2,7 +2,9 @@
 // no tempo da legenda correspondente (js/trailer-tempos.js → FALAS).
 // Resultado: audio/narracao.mp3 (usado por scripts/trailer.mjs).
 //
-// Uso: node scripts/narracao.mjs [--voz=VOICE_ID] [--refazer]
+// Uso: node scripts/narracao.mjs [--video=02] [--voz=VOICE_ID] [--refazer]
+//   --video=01 (padrão): js/trailer-tempos.js → audio/narracao.mp3 + audio/narracao-palavras.json
+//   --video=NN:          js/videoNN-tempos.js → audio/videoNN-narracao.mp3 + audio/videoNN-palavras.json
 // A chave vem de ELEVENLABS_API_KEY. Neste ambiente de nuvem ela é injetada
 // pelo proxy, então qualquer valor de placeholder funciona.
 import { spawnSync } from 'node:child_process';
@@ -19,7 +21,11 @@ const args = Object.fromEntries(process.argv.slice(2).map((a) => a.replace(/^--/
 const VOZ = args.voz || 'pqHfZKP75CvOlQylNhV4'; // "Bill": madura, sábia, grave (voz padrão da ElevenLabs)
 const CHAVE = process.env.ELEVENLABS_API_KEY || 'proxy-injected';
 // Falas, tempos e interpretação vêm da linha do tempo do vídeo (fonte única)
-const TEMPOS = await import('../js/trailer-tempos.js');
+const VIDEO = String(args.video || '01').padStart(2, '0');
+const PRIMEIRO = VIDEO === '01';
+const TEMPOS = await import(PRIMEIRO ? '../js/trailer-tempos.js' : `../js/video${VIDEO}-tempos.js`);
+const SAIDA_VOZ = resolve(RAIZ, PRIMEIRO ? 'audio/narracao.mp3' : `audio/video${VIDEO}-narracao.mp3`);
+const SAIDA_PALAVRAS = resolve(RAIZ, PRIMEIRO ? 'audio/narracao-palavras.json' : `audio/video${VIDEO}-palavras.json`);
 const DURACAO = TEMPOS.DURACAO;
 const FALAS = TEMPOS.FALAS.map(([ini, fim, legenda, falado]) => [ini, fim, falado || legenda.replaceAll('*', '').replaceAll('…', '...')]);
 const ESTILO = TEMPOS.INTERPRETACAO;
@@ -78,7 +84,7 @@ arquivos.forEach((arq, i) => {
 });
 filtros.push(`${arquivos.map((_, i) => `[f${i}]`).join('')}amix=inputs=${arquivos.length}:normalize=0,apad,atrim=0:${DURACAO}[voz]`);
 
-const saida = resolve(RAIZ, 'audio/narracao.mp3');
+const saida = SAIDA_VOZ;
 const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...entradas, '-filter_complex', filtros.join(';'), '-map', '[voz]', '-ac', '1', '-c:a', 'libmp3lame', '-q:a', '2', saida], { stdio: 'inherit' });
 if (r.status !== 0) process.exit(r.status);
 console.log(`Pronto: ${saida}`);
@@ -89,7 +95,7 @@ const stt = spawnSync('curl', ['-sS', '-X', 'POST', 'https://api.elevenlabs.io/v
 try {
   const d = JSON.parse(stt.stdout.toString());
   const palavras = d.words.filter((w) => w.type === 'word').map((w) => ({ t: +w.start.toFixed(2), fim: +w.end.toFixed(2), p: w.text }));
-  writeFileSync(resolve(RAIZ, 'audio/narracao-palavras.json'), JSON.stringify(palavras, null, 1) + '\n');
+  writeFileSync(SAIDA_PALAVRAS, JSON.stringify(palavras, null, 1) + '\n');
   console.log(`Transcrição: ${d.text}`);
 } catch {
   console.warn('Não consegui transcrever; o trailer usa legendas por frase.');

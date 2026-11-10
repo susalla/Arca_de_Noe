@@ -261,6 +261,8 @@ export const TIPOS_DE_ANIMAIS = {
   gato:     { emoji: '🐈', corpo: [0.6, 0.35, 0.3], perna: 0.25, pescoco: 0.1, cabeca: 0.25, cor: '#f39c12', orelhas: true },
   camelo:   { emoji: '🐫', corpo: [1.6, 0.8, 0.6], perna: 1.2, pescoco: 0.7, cabeca: 0.35, cor: '#c9a26b', corcova: true },
   pinguim:  { emoji: '🐧', corpo: [0.45, 0.5, 0.45], perna: 0.1, pescoco: 0.05, cabeca: 0.28, cor: '#222222', corCabeca: '#222222' },
+  jacare:   { emoji: '🐊', corpo: [1.9, 0.34, 0.62], perna: 0.16, pescoco: 0.02, cabeca: 0.3, cor: '#4e7d3a', focinho: 0.8, dentes: true, raboLongo: 1.7, escamas: '#3a6330' },
+  onca:     { emoji: '🐆', corpo: [1.45, 0.6, 0.55], perna: 0.55, pescoco: 0.18, cabeca: 0.42, cor: '#e3a63d', manchas: '#3a2410', manchasQtd: 16, orelhinhas: true, raboLongo: 1.0 },
 };
 
 export function criarAnimal(tipo, semente) {
@@ -276,9 +278,10 @@ export function criarAnimal(tipo, semente) {
 
   if (p.manchas) {
     const r = aleatorio(semente);
-    for (let i = 0; i < 6; i++) {
-      const m = new THREE.Mesh(new THREE.BoxGeometry(cl * 0.15, ca * 0.3, 0.02), mat(p.manchas));
-      m.position.set((r() - 0.5) * cl * 0.8, p.perna + ca * (0.25 + r() * 0.5), (r() > 0.5 ? 1 : -1) * (cp / 2 + 0.01));
+    for (let i = 0; i < (p.manchasQtd || 6); i++) {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(cl * (p.manchasQtd ? 0.08 : 0.15), ca * (p.manchasQtd ? 0.18 : 0.3), 0.02), mat(p.manchas));
+      const lado = p.manchasQtd ? (i % 2 ? 1 : -1) : (r() > 0.5 ? 1 : -1); // muitas pintas: metade de cada lado
+      m.position.set((r() - 0.5) * cl * 0.8, p.perna + ca * (0.25 + r() * 0.5), lado * (cp / 2 + 0.01));
       g.add(m);
     }
   }
@@ -342,9 +345,50 @@ export function criarAnimal(tipo, semente) {
     g.add(crista);
   }
 
-  const rabo = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 0.06).translate(-0.2, 0, 0).scale(1, 1, 1), corpoMat);
-  rabo.position.set(-frente, p.perna + ca * 0.8, 0);
-  g.add(rabo);
+  if (p.focinho) {
+    // focinho comprido (jacaré), com dentes à mostra
+    const focinho = new THREE.Mesh(new THREE.BoxGeometry(p.focinho, p.cabeca * 0.45, p.cabeca * 0.75), cabecaMat);
+    focinho.position.set(cabeca.position.x + p.cabeca * 0.6 + p.focinho / 2, cabeca.position.y - p.cabeca * 0.2, 0);
+    g.add(focinho);
+    if (p.dentes) {
+      for (let i = 0; i < 6; i++) for (const sz of [-1, 1]) {
+        const dente = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.07, 4), mat('#f4f1e6'));
+        dente.rotation.x = Math.PI;
+        dente.position.set(focinho.position.x - p.focinho / 2 + 0.08 + i * (p.focinho - 0.12) / 6, focinho.position.y - p.cabeca * 0.25, sz * p.cabeca * 0.36);
+        g.add(dente);
+      }
+    }
+  }
+  if (p.escamas) {
+    for (let i = 0; i < 7; i++) {
+      const escama = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.14, 4), mat(p.escamas));
+      escama.position.set(frente - 0.2 - i * (cl - 0.3) / 6, p.perna + ca + 0.05, 0);
+      g.add(escama);
+    }
+  }
+  if (p.orelhinhas) {
+    for (const sz of [-1, 1]) {
+      const orelha = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.12, 4), cabecaMat);
+      orelha.position.set(cabeca.position.x - 0.08, cabeca.position.y + p.cabeca * 0.55, sz * p.cabeca * 0.3);
+      g.add(orelha);
+    }
+  }
+
+  if (p.raboLongo) {
+    // rabo longo e afinando para trás
+    const rabo = new THREE.Mesh(new THREE.ConeGeometry(p.escamas ? cp * 0.33 : 0.09, p.raboLongo, 5), corpoMat);
+    rabo.rotation.z = Math.PI / 2; // ponta para -x
+    rabo.position.set(-frente - p.raboLongo / 2 + 0.05, p.perna + ca * (p.escamas ? 0.4 : 0.75), 0);
+    if (!p.escamas) { // felino: rabo sobe em curva para trás
+      rabo.rotation.z = Math.PI / 2 - 0.55;
+      rabo.position.set(-frente - p.raboLongo * 0.42, p.perna + ca * 0.75 + p.raboLongo * 0.24, 0);
+    }
+    g.add(rabo);
+  } else {
+    const rabo = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 0.06).translate(-0.2, 0, 0), corpoMat);
+    rabo.position.set(-frente, p.perna + ca * 0.8, 0);
+    g.add(rabo);
+  }
 
   g.userData.pernas = pernas;
   return sombra(g);
