@@ -1,5 +1,5 @@
 // Gera a narração do Noé na ElevenLabs, uma fala por vez, e encaixa cada fala
-// no tempo da legenda correspondente (js/trailer.js → FALAS).
+// no tempo da legenda correspondente (js/trailer-tempos.js → FALAS).
 // Resultado: audio/narracao.mp3 (usado por scripts/trailer.mjs).
 //
 // Uso: node scripts/narracao.mjs [--voz=VOICE_ID] [--refazer]
@@ -7,6 +7,7 @@
 // pelo proxy, então qualquer valor de placeholder funciona.
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,34 +18,19 @@ mkdirSync(PASTA, { recursive: true });
 const args = Object.fromEntries(process.argv.slice(2).map((a) => a.replace(/^--/, '').split('=')).map(([k, v]) => [k, v ?? true]));
 const VOZ = args.voz || 'pqHfZKP75CvOlQylNhV4'; // "Bill": madura, sábia, grave (voz padrão da ElevenLabs)
 const CHAVE = process.env.ELEVENLABS_API_KEY || 'proxy-injected';
-const DURACAO = 23;
-
-// Texto falado (pode diferir da legenda: números por extenso, pausas com vírgula)
-const FALAS = [
-  [0.25, 2.35, 'O dilúvio está vindo.'],
-  [2.45, 5.0, 'E eu preciso construir uma arca, sozinho.'],
-  [5.1, 8.6, 'Mas cada pessoa que me seguir vira um ajudante.'],
-  [8.7, 12.35, 'Me siga, e amanhã você aparece aqui, comigo!'],
-  [12.6, 16.4, 'Com dez mil ajudantes, a arca fica pronta.'],
-  [16.6, 19.9, 'Sem eles... você sabe o que acontece.'],
-  [20.1, 23.0, 'Me segue. O dilúvio não espera.'],
-];
-
-// Ajuste de interpretação por fala: estabilidade menor = mais emoção
-const ESTILO = [
-  { stability: 0.4, style: 0.5 },  // grave, sério
-  { stability: 0.4, style: 0.45 }, // cansado, "sozinho"
-  { stability: 0.5, style: 0.35 }, // explicando
-  { stability: 0.35, style: 0.6 }, // animado, sorrindo
-  { stability: 0.45, style: 0.5 }, // épico
-  { stability: 0.35, style: 0.55 },// baixo, ameaçador
-  { stability: 0.4, style: 0.6 },  // firme, chamado
-];
+// Falas, tempos e interpretação vêm da linha do tempo do vídeo (fonte única)
+const TEMPOS = await import('../js/trailer-tempos.js');
+const DURACAO = TEMPOS.DURACAO;
+const FALAS = TEMPOS.FALAS.map(([ini, fim, legenda, falado]) => [ini, fim, falado || legenda.replaceAll('*', '').replaceAll('…', '...')]);
+const ESTILO = TEMPOS.INTERPRETACAO;
 
 const duracaoDe = (arq) => Number(spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', arq]).stdout.toString().trim());
 
 function gerar(i) {
-  const arq = resolve(PASTA, `fala-${i + 1}.mp3`);
+  // O nome do arquivo depende do texto, da voz e da interpretação:
+  // só gera de novo (e gasta créditos) o que mudou.
+  const id = createHash('sha1').update(JSON.stringify([FALAS[i][2], VOZ, ESTILO[i]])).digest('hex').slice(0, 10);
+  const arq = resolve(PASTA, `fala-${id}.mp3`);
   if (existsSync(arq) && !args.refazer) return arq;
   const corpo = JSON.stringify({
     text: FALAS[i][2],
@@ -80,7 +66,7 @@ const entradas = [];
 arquivos.forEach((arq, i) => {
   const [ini, fim] = FALAS[i];
   entradas.push('-i', arq);
-  const limpo = resolve(PASTA, `fala-${i + 1}-limpa.wav`);
+  const limpo = arq.replace(/\.mp3$/, '-limpa.wav');
   spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', arq, '-af',
     'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse', limpo]);
   const dur = duracaoDe(limpo);

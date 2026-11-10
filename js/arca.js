@@ -3,9 +3,10 @@
 // (sem escala/rotação "escondida"), só a animação de entrada mexe no transform.
 import * as THREE from 'three';
 
-export const COMPRIMENTO = 24;
-export const LARGURA = 7;
-export const ALTURA = 5;
+// Grande de propósito: perto dela, o Noé e os ajudantes parecem formiguinhas.
+export const COMPRIMENTO = 40;
+export const LARGURA = 11;
+export const ALTURA = 8;
 export const ELEVACAO = 0.7; // altura dos suportes: o casco fica acima do chão
 
 const META_X = COMPRIMENTO / 2;
@@ -120,7 +121,7 @@ function criarPecas() {
   // 1. Suportes (cavaletes de madeira no chão)
   const suportes = new THREE.Group();
   for (let i = -4; i <= 4; i++) {
-    const x = i * 2.4;
+    const x = i * (COMPRIMENTO / 10);
     suportes.add(caixa(0.5, baseY(x) + 0.1, LARGURA * 0.35, x, (baseY(x) + 0.1) / 2, 0, corMadeira(i, true)));
   }
   add('Suportes', suportes);
@@ -155,7 +156,7 @@ function criarPecas() {
 
   // 7. Cabine (paredes)
   const deckY = baseY(0) + ALTURA;
-  const cabL = COMPRIMENTO * 0.55, cabW = LARGURA * 0.55, cabH = 2.4, esp = 0.18;
+  const cabL = COMPRIMENTO * 0.55, cabW = LARGURA * 0.55, cabH = ALTURA * 0.45, esp = 0.22;
   const corCab = corMadeira(50);
   add('Parede da cabine', caixa(cabL, cabH, esp, 0, deckY + cabH / 2, cabW / 2, corCab));
   add('Parede da cabine', caixa(cabL, cabH, esp, 0, deckY + cabH / 2, -cabW / 2, corCab));
@@ -167,7 +168,7 @@ function criarPecas() {
   const corJanela = new THREE.Color('#2b1a0e');
   for (let i = -3; i <= 3; i++) {
     for (const lado of [1, -1]) {
-      janelas.add(caixa(0.9, 0.6, 0.05, i * 1.8, deckY + cabH * 0.62, lado * (cabW / 2 + 0.1), corJanela));
+      janelas.add(caixa(1.3, 0.9, 0.05, i * (cabL / 8), deckY + cabH * 0.62, lado * (cabW / 2 + 0.1), corJanela));
     }
   }
   add('Janelas', janelas);
@@ -183,14 +184,15 @@ function criarPecas() {
 
   // 10. Porta no costado e 11. rampa até o chão
   const xPorta = 3;
+  const alcanceRampa = 7.5;
   const zCostado = meiaLargura(xPorta, ALTURA * 0.45);
-  const porta = caixa(2.2, 2.4, 0.12, xPorta, baseY(xPorta) + ALTURA * 0.45, zCostado + 0.05, corJanela);
+  const porta = caixa(3, 3.4, 0.12, xPorta, baseY(xPorta) + ALTURA * 0.45, zCostado + 0.05, corJanela);
   add('Porta', porta);
 
-  const baseRampaY = baseY(xPorta) + ALTURA * 0.45 - 1.2;
-  const comprimentoRampa = Math.hypot(baseRampaY, 5.5);
-  const rampa = caixa(2.2, 0.18, comprimentoRampa, xPorta, baseRampaY / 2, zCostado + 5.5 / 2, corMadeira(70));
-  rampa.rotation.x = Math.atan2(baseRampaY, 5.5);
+  const baseRampaY = baseY(xPorta) + ALTURA * 0.45 - 1.7;
+  const comprimentoRampa = Math.hypot(baseRampaY, alcanceRampa);
+  const rampa = caixa(3, 0.2, comprimentoRampa, xPorta, baseRampaY / 2, zCostado + alcanceRampa / 2, corMadeira(70));
+  rampa.rotation.x = Math.atan2(baseRampaY, alcanceRampa);
   add('Rampa', rampa);
 
   return pecas;

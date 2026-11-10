@@ -14,11 +14,11 @@ export class Cenario {
     cena.add(this.hemisferica);
 
     this.sol = new THREE.DirectionalLight('#fff3d6', 2.2);
-    this.sol.position.set(18, 30, 22);
+    this.sol.position.set(26, 44, 32);
     this.sol.castShadow = true;
     this.sol.shadow.mapSize.set(2048, 2048);
     const s = this.sol.shadow.camera;
-    s.left = -30; s.right = 30; s.top = 30; s.bottom = -30; s.near = 1; s.far = 90;
+    s.left = -45; s.right = 45; s.top = 45; s.bottom = -45; s.near = 1; s.far = 130;
     this.sol.shadow.bias = -0.0005;
     cena.add(this.sol);
 
@@ -39,7 +39,7 @@ export class Cenario {
 
     // Terra batida em volta da obra
     const terra = new THREE.Mesh(new THREE.CircleGeometry(1, 24).rotateX(-Math.PI / 2), mat('#b89263'));
-    terra.scale.set(20, 1, 11);
+    terra.scale.set(30, 1, 17);
     terra.position.y = 0.02;
     terra.receiveShadow = true;
     cena.add(terra);
@@ -57,7 +57,7 @@ export class Cenario {
     let n = 0;
     while (n < 80) {
       const a = r() * Math.PI * 2;
-      const d = 34 + r() * 40;
+      const d = 48 + r() * 34;
       const x = Math.cos(a) * d, z = Math.sin(a) * d;
       const e = 0.7 + r() * 0.9;
       aux.rotation.set(0, r() * 6, 0);

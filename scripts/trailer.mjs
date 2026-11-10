@@ -9,7 +9,7 @@
 // Narração (opcional): coloque o arquivo em audio/narracao.mp3 (ou .wav/.m4a).
 // A música abaixa sozinha quando o Noé fala (sidechain).
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -18,7 +18,16 @@ const VIDEOS = resolve(RAIZ, 'videos');
 mkdirSync(VIDEOS, { recursive: true });
 const IMAGEM = resolve(VIDEOS, 'trailer-imagem.mp4');
 const TRILHA = resolve(VIDEOS, 'trailer-trilha.wav');
-const D = 23; // duração (igual a DURACAO em js/trailer.js)
+// Linha do tempo compartilhada com a imagem e a narração
+const T = await import('../js/trailer-tempos.js');
+const PALAVRAS_JSON = resolve(RAIZ, 'audio/narracao-palavras.json');
+if (existsSync(PALAVRAS_JSON)) T.sincronizarComPalavras(JSON.parse(readFileSync(PALAVRAS_JSON, 'utf8')));
+const { MARCOS } = T;
+const D = T.DURACAO;
+const cena = (nome) => { const i = T.CENAS.findIndex((c) => c[1] === nome); return [T.CENAS[i][0], T.CENAS[i + 1] ? T.CENAS[i + 1][0] : D]; };
+const [, FIM_VAGA] = cena('vaga');
+const [INI_CONSTR, FIM_CONSTR] = cena('construcao');
+const [INI_AMEACA, FIM_AMEACA] = cena('ameaca');
 const SR = 48000;
 
 function rodar(cmd, args) {
@@ -32,29 +41,36 @@ if (!process.argv.includes('--so-audio') || !existsSync(IMAGEM)) {
 }
 
 // ------------------------------------------------------------ 2. Trilha
-// Tempos-chave (mesmos de js/trailer.js)
-const RAIOS = [0.12, 1.55, 17.9, 19.35, 21.6];
-const TROVOES = RAIOS.map((r, i) => [r + 0.15, [1, 0.7, 0.8, 1, 1.1][i]]);
+// Tempos-chave (de js/trailer-tempos.js)
+const TROVOES = T.RAIOS.map((r, i) => [r + 0.15, [1, 0.7, 0.8, 1, 1.1][i] ?? 1]);
 
 // Marteladas: o braço do Noé desce em t = (π + 2πk) / 5
 const marteladas = [];
 for (let k = 0; ; k++) {
   const t = (Math.PI + 2 * Math.PI * k) / 5;
-  if (t > 20) break;
-  if ((t > 2.4 && t < 12.4) || (t > 16.6 && t < 19.8)) marteladas.push(+t.toFixed(3));
+  if (t > D) break;
+  if ((t > 2.4 && t < FIM_VAGA - 0.1) || (t > INI_AMEACA + 0.1 && t < FIM_AMEACA - 0.1)) marteladas.push(+t.toFixed(3));
 }
 // Marteladas dos ajudantes (mais agudas, mais leves), só quando já tem gente
 const marteladasAjudantes = [];
-for (let t = 7.0; t < 12.4; t += 0.31) marteladasAjudantes.push(+(t + ((t * 7) % 0.11)).toFixed(3));
+for (let t = 7.0; t < FIM_VAGA - 0.1; t += 0.31) marteladasAjudantes.push(+(t + ((t * 7) % 0.11)).toFixed(3));
+// Time-lapse: canteiro de obras frenético + baque de cada peça pousando
+const frenesi = [];
+for (let t = INI_CONSTR + 0.15; t < FIM_CONSTR - 0.2; t += 0.115) frenesi.push(+(t + ((t * 13) % 0.04)).toFixed(3));
+const TOTAL_PECAS = 55;
+const baques = [];
+for (let i = 0; i < TOTAL_PECAS; i += 2) baques.push(+(MARCOS.pecasInicio + (i * MARCOS.pecasDuracao) / TOTAL_PECAS + 0.72).toFixed(3));
 
 // "Pop" de cada ajudante pousando (mesma conta de Ajudantes.atualizar + 0,5 s de queda)
 const pops = [];
 for (let i = 0; i < 14; i++) pops.push(5.5 + (i / 14) * 3.0 + 0.5);
 for (let i = 0; i < 26; i += 2) pops.push(8.8 + (i / 26) * 2.2 + 0.5);
-const SINO_VOCE = 9.75; // o "@VOCÊ" pousa
-const IMPACTO = 12.5;   // flash-forward
+const SINO_VOCE = MARCOS.vocePousa;
+const BILHETE = MARCOS.bilhete;
+const IMPACTO = MARCOS.impacto;
 const CORACAO = [];
-for (let t = 16.7; t < 19.9; t += 0.82) CORACAO.push(+t.toFixed(3), +(t + 0.2).toFixed(3));
+for (let t = INI_AMEACA + 0.2; t < FIM_AMEACA - 0.1; t += 0.82) CORACAO.push(+t.toFixed(3), +(t + 0.2).toFixed(3));
+const R0 = IMPACTO - 1.5; // início do riser
 
 const f = (n) => n.toFixed(3);
 const somaDe = (tempos, expr) => tempos.map((h) => `if(gte(t,${f(h)}),${expr.replaceAll('T', `(t-${f(h)})`)},0)`).join('+') || '0';
@@ -77,7 +93,8 @@ const envEstalo = TROVOES.map(([h, s]) => `if(gte(t,${f(h)}),${s}*exp(-(t-${f(h)
 fonte(`anoisesrc=color=white:sample_rate=${SR}:d=${D}:seed=4`, `highpass=f=1800,lowpass=f=7000,volume='${envEstalo}':eval=frame,volume=0.55`, 'estalo');
 
 // Chuva (acompanha a intensidade da chuva na imagem)
-const chuva = 'if(lt(t,2.4),1,if(lt(t,16.5),0,if(lt(t,20),clip((t-17.4)/2.1,0,1)*0.9,1)))';
+const [c0, c1] = MARCOS.chuvaAmeaca;
+const chuva = `if(lt(t,2.4),1,if(lt(t,${INI_AMEACA}),0,if(lt(t,${FIM_AMEACA}),clip((t-${c0})/${(c1 - c0).toFixed(2)},0,1)*0.9,1)))`;
 fonte(`anoisesrc=color=pink:sample_rate=${SR}:d=${D}:seed=5`, `highpass=f=700,lowpass=f=9000,volume='${chuva}':eval=frame,volume=0.33`, 'chuva');
 
 // Vento no "sozinho"
@@ -86,14 +103,18 @@ fonte(`anoisesrc=color=pink:sample_rate=${SR}:d=${D}:seed=6`, `bandpass=f=420:wi
 // Marteladas: tom de madeira (180 Hz) + clique
 fonte(aeval(somaDe(marteladas, '(0.9*sin(2*PI*175*T)*exp(-T*38)+0.5*sin(2*PI*410*T)*exp(-T*60))')), 'volume=0.55', 'martelo');
 fonte(aeval(somaDe(marteladasAjudantes, '0.5*sin(2*PI*260*T)*exp(-T*55)')), 'volume=0.28', 'martelo2');
+fonte(aeval(somaDe(frenesi, '(0.6*sin(2*PI*230*T)*exp(-T*50)+0.3*sin(2*PI*520*T)*exp(-T*80))')), 'volume=0.3', 'frenesi');
+fonte(aeval(somaDe(baques, 'sin(2*PI*(70+40*exp(-T*20))*T)*exp(-T*14)')), 'volume=0.55', 'baques');
 
 // Pops dos ajudantes + sino do @VOCÊ
 fonte(aeval(somaDe(pops, '0.6*sin(2*PI*(520+1400*T)*T)*exp(-T*22)')), 'volume=0.35', 'pops');
 fonte(aeval(somaDe([SINO_VOCE], '(0.6*sin(2*PI*1318.5*T)+0.4*sin(2*PI*1975.5*T))*exp(-T*3.5)') + '+' + somaDe([SINO_VOCE + 0.12], '0.5*sin(2*PI*2637*T)*exp(-T*4)')), 'volume=0.4', 'sino');
+// "Vaga garantida": arpejo de conquista (Dó–Mi–Sol–Dó)
+fonte(aeval([0, 0.08, 0.16, 0.24].map((d, i) => somaDe([BILHETE + d], `${[0.5, 0.5, 0.5, 0.6][i]}*sin(2*PI*${[1046.5, 1318.5, 1568, 2093][i]}*T)*exp(-T*5)`)).join('+')), 'volume=0.32', 'conquista');
 
 // Subida (riser) + impacto grave do flash-forward
-fonte(aeval(`if(between(t,11.0,${IMPACTO}),pow((t-11)/1.5,2)*(0.5*sin(2*PI*(150+700*pow((t-11)/1.5,2))*t)),0)`), 'volume=0.35', 'riser');
-fonte(`anoisesrc=color=white:sample_rate=${SR}:d=${D}:seed=7`, `highpass=f=2000,volume='if(between(t,11,${IMPACTO}),pow((t-11)/1.5,3),0)':eval=frame,volume=0.25`, 'riser2');
+fonte(aeval(`if(between(t,${R0},${IMPACTO}),pow((t-${R0})/1.5,2)*(0.5*sin(2*PI*(150+700*pow((t-${R0})/1.5,2))*t)),0)`), 'volume=0.35', 'riser');
+fonte(`anoisesrc=color=white:sample_rate=${SR}:d=${D}:seed=7`, `highpass=f=2000,volume='if(between(t,${R0},${IMPACTO}),pow((t-${R0})/1.5,3),0)':eval=frame,volume=0.25`, 'riser2');
 fonte(aeval(somaDe([IMPACTO], '(sin(2*PI*(42+30*exp(-T*6))*T)*exp(-T*1.6))')), 'volume=1.1', 'impacto');
 
 // Batida de coração
@@ -102,7 +123,7 @@ fonte(aeval(somaDe(CORACAO, 'sin(2*PI*55*T)*exp(-T*16)')), 'lowpass=f=200,volume
 // Música: drone tenso (Ré menor) → arpejo esperançoso → acorde épico (Ré maior) → drone escuro
 const nota = (hz, amp) => `${amp}*sin(2*PI*${hz}*t)`;
 const drone = `(${nota(73.42, 0.5)}+${nota(110, 0.35)}+${nota(146.83, 0.25)}+${nota(174.61, 0.18)})*(0.8+0.2*sin(2*PI*0.25*t))`;
-const volDrone = `if(lt(t,2.4),0.9,if(lt(t,5),0.35,if(lt(t,12.5),0.25,if(lt(t,16.5),0,if(lt(t,22.9),0.5+0.5*clip((t-16.5)/4,0,1),0)))))`;
+const volDrone = `if(lt(t,2.4),0.9,if(lt(t,5),0.35,if(lt(t,${INI_CONSTR}),0.25,if(lt(t,${FIM_CONSTR}),0,if(lt(t,${D - 0.1}),0.5+0.5*clip((t-${FIM_CONSTR})/4,0,1),0)))))`;
 fonte(aeval(`(${drone})*(${volDrone})`), 'lowpass=f=900,volume=0.22', 'drone');
 
 // Arpejo (Ré–Fá#–Lá–Ré) em colcheias, 5,0 s → 12,4 s
@@ -110,14 +131,14 @@ const passo = 0.3;
 const idx = `mod(floor((t-5)/${passo}),4)`;
 const freq = `if(eq(${idx},0),293.66,if(eq(${idx},1),369.99,if(eq(${idx},2),440,587.33)))`;
 const fase = `mod(t-5,${passo})`;
-fonte(aeval(`if(between(t,5,12.4),(sin(2*PI*${freq}*${fase})+0.3*sin(4*PI*${freq}*${fase}))*exp(-${fase}*9)*(0.6+0.4*clip((t-5)/6,0,1)),0)`), 'lowpass=f=3000,volume=0.18', 'arpejo');
+fonte(aeval(`if(between(t,5,${FIM_VAGA - 0.2}),(sin(2*PI*${freq}*${fase})+0.3*sin(4*PI*${freq}*${fase}))*exp(-${fase}*9)*(0.6+0.4*clip((t-5)/6,0,1)),0)`), 'lowpass=f=3000,volume=0.18', 'arpejo');
 
 // Acorde épico do futuro (Ré maior, com cordas "abrindo")
 const epico = [73.42, 146.83, 220, 293.66, 369.99, 440].map((hz, i) => nota(hz, [0.5, 0.4, 0.3, 0.25, 0.2, 0.15][i]) + `*(1+0.004*sin(2*PI*5*t))`).join('+');
-fonte(aeval(`if(between(t,${IMPACTO},16.6),(${epico})*clip((t-${IMPACTO})/0.4,0,1)*clip((16.6-t)/0.3,0,1),0)`), 'lowpass=f=2500,volume=0.2', 'epico');
+fonte(aeval(`if(between(t,${IMPACTO},${FIM_CONSTR + 0.1}),(${epico})*clip((t-${IMPACTO})/0.4,0,1)*clip((${FIM_CONSTR + 0.1}-t)/0.3,0,1),0)`), 'lowpass=f=2500,volume=0.2', 'epico');
 
-const camadas = ['trovao', 'estalo', 'chuva', 'vento', 'martelo', 'martelo2', 'pops', 'sino', 'riser', 'riser2', 'impacto', 'coracao', 'drone', 'arpejo', 'epico'];
-filtros.push(`${camadas.map((c) => `[${c}]`).join('')}amix=inputs=${camadas.length}:normalize=0,afade=t=out:st=22.75:d=0.25[efeitos]`);
+const camadas = ['trovao', 'estalo', 'chuva', 'vento', 'martelo', 'martelo2', 'frenesi', 'baques', 'pops', 'sino', 'conquista', 'riser', 'riser2', 'impacto', 'coracao', 'drone', 'arpejo', 'epico'];
+filtros.push(`${camadas.map((c) => `[${c}]`).join('')}amix=inputs=${camadas.length}:normalize=0,afade=t=out:st=${D - 0.25}:d=0.25[efeitos]`);
 
 // Narração opcional com ducking
 const narracao = ['mp3', 'wav', 'm4a'].map((e) => resolve(RAIZ, `audio/narracao.${e}`)).find(existsSync);

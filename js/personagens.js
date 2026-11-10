@@ -233,7 +233,7 @@ export const TIPOS_DE_ANIMAIS = {
   pinguim:  { emoji: '🐧', corpo: [0.45, 0.5, 0.45], perna: 0.1, pescoco: 0.05, cabeca: 0.28, cor: '#222222', corCabeca: '#222222' },
 };
 
-function criarAnimal(tipo, semente) {
+export function criarAnimal(tipo, semente) {
   const p = TIPOS_DE_ANIMAIS[tipo];
   const g = new THREE.Group();
   const [cl, ca, cp] = p.corpo;
@@ -339,7 +339,7 @@ export class Animais {
         const a = criarAnimal(tipo, k * 31 + lado);
         // Fila sai do pé da rampa (x = 3, z ≈ 9) e se afasta pela frente.
         const x = 3 + lado * 0.75;
-        const z = LARGURA / 2 + 6.5 + distancia;
+        const z = LARGURA / 2 + 8 + distancia;
         a.position.set(x, 0, z);
         a.rotation.y = Math.PI / 2; // olhando para a arca
         this.grupo.add(a);

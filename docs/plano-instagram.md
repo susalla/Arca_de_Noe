@@ -4,9 +4,10 @@
 
 1. **Participação real:** seguir = virar ajudante. A pessoa vê o próprio impacto no dia seguinte.
 2. **Reconhecimento:** os @ dos novos ajudantes aparecem flutuando no vídeo. Quem é marcado compartilha.
-3. **Progresso visível:** barra de %, contador e "próxima peça: faltam X seguidores". É uma meta coletiva e concreta.
-4. **Tensão crescente:** o céu escurece conforme a arca fica pronta. "Será que dá tempo antes do dilúvio?"
-5. **Formato de série:** "Dia 1", "Dia 2"… Quem chega quer ver o começo, e quem acompanha não quer perder o fim.
+3. **Progresso visível:** contador e "próxima peça: faltam X seguidores". O progresso é concreto, mas o fim fica em aberto: "quanto mais gente, mais rápido a gente constrói".
+4. **Vaga na arca + animal:** cada seguidor garante uma vaga e escolhe um animal para levar. A escolha nos comentários vira conteúdo dos próximos vídeos.
+5. **Tensão crescente:** o céu escurece conforme a arca fica pronta. "Será que dá tempo antes do dilúvio?"
+6. **Formato de série:** "Dia 1", "Dia 2"… Quem chega quer ver o começo, e quem acompanha não quer perder o fim.
 
 ## Formato do Reel diário (12–15 s)
 
@@ -56,5 +57,5 @@ Dica: use um áudio em alta do momento por baixo e coloque o texto do gancho nos
 
 - Mantenha os números honestos: o charme é a construção coletiva real.
 - Só exiba @ de quem seguiu e pode ser marcado. Se alguém pedir para sair, remova da lista `novosAjudantes`.
-- Defina a `meta` pensando no fôlego da série: 10.000 seguidores = arca completa. Dá para aumentar e
-  lançar uma "temporada 2" (o dilúvio!) depois.
+- Não divulgue um número final. O `meta` do `progresso.json` só controla o ritmo interno das peças no site;
+  ajuste à vontade conforme a série andar (e dá para lançar uma "temporada 2": o dilúvio!).

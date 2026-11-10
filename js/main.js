@@ -112,7 +112,7 @@ async function iniciar() {
     controles.enableDamping = true;
     controles.maxPolarAngle = Math.PI * 0.48;
     controles.minDistance = 6;
-    controles.maxDistance = 90;
+    controles.maxDistance = 150;
     controles.autoRotate = true;
     controles.autoRotateSpeed = 0.4;
     controles.addEventListener('start', () => { controles.autoRotate = false; });
@@ -130,7 +130,7 @@ async function iniciar() {
     const anguloInicial = Math.atan2(30, 14);
     const orbita = (tt) => {
       const a = anguloInicial + tt * 0.06;
-      return new THREE.Vector3(Math.cos(a) * 33, 13, Math.sin(a) * 33);
+      return new THREE.Vector3(Math.cos(a) * 52, 19, Math.sin(a) * 52);
     };
     const k = THREE.MathUtils.smoothstep(t, 1.6, 4.2);
     posA.copy(close).lerp(orbita(Math.max(0, t - 4.2)), k);
@@ -153,7 +153,7 @@ async function iniciar() {
   }
   ajustarTamanho();
   window.addEventListener('resize', ajustarTamanho);
-  if (!MODO_VIDEO) camera.position.set(16, 12, camera.aspect < 0.8 ? 42 : 32);
+  if (!MODO_VIDEO) camera.position.set(26, 18, camera.aspect < 0.8 ? 66 : 50);
 
   function renderizarEm(t) {
     arca.atualizar(t);
