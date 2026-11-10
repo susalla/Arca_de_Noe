@@ -50,6 +50,7 @@ export class Noe {
 
     // Braço esquerdo segura o cajado, o direito martela.
     const bracoEsq = new THREE.Group();
+    this.bracoEsq = bracoEsq;
     bracoEsq.position.set(-0.4, 1.2, 0);
     const mangaE = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.6, 6), mat('#8a5a2b'));
     mangaE.position.y = -0.28;
@@ -57,6 +58,7 @@ export class Noe {
     bracoEsq.rotation.z = 0.25;
     const cajado = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 2.1, 6), mat('#5a3a1d'));
     cajado.position.set(-0.62, 1.0, 0.15);
+    this.cajado = cajado;
 
     this.bracoDir = new THREE.Group();
     this.bracoDir.position.set(0.4, 1.2, 0);
@@ -68,9 +70,37 @@ export class Noe {
     const ferro = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.28), mat('#6e6e6e'));
     ferro.position.set(0, -0.6, 0.45);
     ferro.rotation.x = Math.PI / 2;
-    this.bracoDir.add(mangaD, cabo, ferro);
+    this.martelo = new THREE.Group();
+    this.martelo.add(cabo, ferro);
+    // Serrote (aparece só quando ele serra)
+    this.serrote = new THREE.Group();
+    const lamina = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.16, 0.6), mat('#b8bcc2', { metalness: 0.6, roughness: 0.4 }));
+    lamina.position.set(0, -0.62, 0.42);
+    const punho = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.12, 0.14), mat('#7a4a22'));
+    punho.position.set(0, -0.6, 0.08);
+    this.serrote.add(lamina, punho);
+    this.serrote.visible = false;
+    this.bracoDir.add(mangaD, this.martelo, this.serrote);
 
-    g.add(tunica, faixa, manto, cabeca, barba, cabelo, olhos, bracoEsq, cajado, this.bracoDir);
+    // Pés (aparecem embaixo da túnica quando ele anda)
+    this.pes = [-1, 1].map((lado) => {
+      const pe = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.1, 0.3), mat('#4a3020'));
+      pe.position.set(lado * 0.16, 0.05, 0.05);
+      return pe;
+    });
+    // Tora carregada no ombro
+    this.tora = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 2.2, 7), mat('#a8682f'));
+    this.tora.rotation.x = Math.PI / 2;
+    this.tora.position.set(-0.4, 1.58, 0.1);
+    this.tora.visible = false;
+    // Tábua (já serrada) carregada nos braços
+    this.tabua = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 1.9), mat('#c98a45'));
+    this.tabua.position.set(0, 0.95, 0.45);
+    this.tabua.visible = false;
+    this.corpo = new THREE.Group();
+    this.corpo.add(tunica, faixa, manto, cabeca, barba, cabelo, olhos, bracoEsq, cajado, this.bracoDir, this.tora, this.tabua);
+
+    g.add(this.corpo, ...this.pes);
     g.scale.setScalar(1.25); // Noé é um pouco maior que os ajudantes: é o protagonista
     this.grupo = sombra(g);
   }
@@ -100,13 +130,13 @@ function posicaoDoAjudante(i) {
   let z = Math.sin(angulo) * rz;
   // Deixa livre o caminho da rampa (lado da frente, perto de x = 3).
   if (z > 0 && Math.abs(x - 3) < 2.2 && z < LARGURA / 2 + 10) x += x > 3 ? 2.6 : -2.6;
-  // E um espacinho em volta do Noé e da pilha de toras (onde a câmera faz o close).
-  for (const [cx, cz, raio] of [[-3.5, 9.5, 2.6], [-7.5, 8, 2.4]]) {
-    const dx = x - cx, dz = z - cz, d = Math.hypot(dx, dz);
-    if (d < raio) { x = cx + (dx / (d || 1)) * raio; z = cz + (dz / (d || 1)) * raio; }
+  // Área de trabalho do Noé livre (pilha de toras, bancada e caminho até a obra):
+  // quem cair ali é empurrado para a borda mais próxima.
+  const [x0, x1, z0, z1] = [-14, -1.2, 6.6, 14.2];
+  if (x > x0 && x < x1 && z > z0 && z < z1) {
+    const opcoes = [[x0 - 0.3 - (x - x0) * 0.2, z], [x1 + 0.3 + (x1 - x) * 0.2, z], [x, z1 + 0.3 + (z1 - z) * 0.3]];
+    [x, z] = opcoes.reduce((m, o) => (Math.hypot(o[0] - x, o[1] - z) < Math.hypot(m[0] - x, m[1] - z) ? o : m));
   }
-  // Ninguém fica entre o Noé e a câmera do close.
-  if (x > -3.5 && x < 2 && z > 9.5 && z < 18) x = 2 + (x + 3.5) * 0.3;
   return { x, z, fase: r() * Math.PI * 2, rotacao: Math.atan2(-x, -z) + (r() - 0.5) * 0.6, roupa: CORES_ROUPA[Math.floor(r() * CORES_ROUPA.length)], pele: CORES_PELE[Math.floor(r() * CORES_PELE.length)] };
 }
 

@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <title>A Arca do Noé</title>
-  <meta name="description" content="Cada novo seguidor vira um ajudante do Noé. Venha ver a arca sendo construída dia após dia.">
+  <meta name="description" content="Cada novo seguidor vira um ajudante do Noé. Venha ver a arca sendo construída dia após dia, e entre na obra!">
   <link rel="stylesheet" href="css/estilo.css">
   <script type="importmap">
     { "imports": { "three": "./vendor/three.module.min.js" } }
@@ -13,7 +13,36 @@
 <body>
   <canvas id="cena"></canvas>
 
-  <div id="hud">
+  <!-- Site: painel discreto no canto -->
+  <section id="painel" class="so-site">
+    <button id="painel-topo" type="button" aria-expanded="true" aria-controls="painel-corpo">
+      <span class="painel-titulo">🛶 A Arca do Noé</span>
+      <span class="painel-dia" id="painel-dia">Dia 1</span>
+      <span class="painel-seta" aria-hidden="true">▾</span>
+    </button>
+    <div id="painel-corpo">
+      <div class="painel-linha"><b id="painel-ajudantes">0</b> <span id="painel-ajudantes-rotulo">ajudantes</span> <span id="painel-ganho" class="painel-ganho" hidden></span></div>
+      <div class="mini-barra" role="progressbar" aria-label="Progresso da arca"><div id="painel-barra"></div></div>
+      <div class="painel-proxima" id="painel-proxima"></div>
+      <div class="painel-animais" id="painel-animais"></div>
+    </div>
+  </section>
+
+  <a id="seguir" class="so-site" href="https://www.instagram.com/arca_do_noee/" target="_blank" rel="noopener">
+    <img src="assets/perfil.jpg" alt=""> <span>Seguir <b id="seguir-perfil">@arca_do_noee</b></span>
+  </a>
+
+  <button id="explorar" class="so-site" type="button">🎮 Explorar a obra</button>
+
+  <!-- Modo exploração -->
+  <div id="joystick" hidden><div class="base"><div class="pino"></div></div></div>
+  <button id="sair" type="button" hidden>✕ Sair</button>
+  <div id="dica" hidden>Ande com o joystick (ou WASD) · arraste a tela para olhar · Shift corre</div>
+  <div id="aviso" hidden></div>
+  <div id="balao" hidden></div>
+
+  <!-- Modo vídeo (?video=1): HUD grande para Reels -->
+  <div id="hud" class="so-video">
     <header>
       <div class="titulo">A ARCA DO NOÉ</div>
       <div class="dia" id="hud-dia">Dia 1</div>

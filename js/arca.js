@@ -10,6 +10,9 @@ export const ALTURA = 8;
 export const ELEVACAO = 0.7; // altura dos suportes: o casco fica acima do chão
 
 const META_X = COMPRIMENTO / 2;
+// Altura (local, a partir do fundo) do piso interno; a porta abre exatamente nele.
+const PISO_LOCAL = 3.0;
+const PORTA_ALTURA = 3.4;
 
 // Metade da largura do casco no ponto x, na altura local y (0 = fundo, ALTURA = convés).
 export function meiaLargura(x, y) {
@@ -184,18 +187,94 @@ function criarPecas() {
 
   // 10. Porta no costado e 11. rampa até o chão
   const xPorta = 3;
-  const alcanceRampa = 7.5;
-  const zCostado = meiaLargura(xPorta, ALTURA * 0.45);
-  const porta = caixa(3, 3.4, 0.12, xPorta, baseY(xPorta) + ALTURA * 0.45, zCostado + 0.05, corJanela);
+  const alcanceRampa = 9;
+  const meioPorta = PISO_LOCAL + PORTA_ALTURA / 2;
+  const zCostado = meiaLargura(xPorta, meioPorta);
+  const porta = caixa(3, PORTA_ALTURA, 0.12, xPorta, baseY(xPorta) + meioPorta, zCostado + 0.05, corJanela);
   add('Porta', porta);
 
-  const baseRampaY = baseY(xPorta) + ALTURA * 0.45 - 1.7;
+  const baseRampaY = baseY(xPorta) + PISO_LOCAL;
   const comprimentoRampa = Math.hypot(baseRampaY, alcanceRampa);
   const rampa = caixa(3, 0.2, comprimentoRampa, xPorta, baseRampaY / 2, zCostado + alcanceRampa / 2, corMadeira(70));
   rampa.rotation.x = Math.atan2(baseRampaY, alcanceRampa);
   add('Rampa', rampa);
 
   return pecas;
+}
+
+// Porta e rampa (usadas pelo modo exploração para entrar na arca)
+export const PORTA = (() => {
+  const x = 3, alcance = 9;
+  const z = meiaLargura(x, PISO_LOCAL + PORTA_ALTURA / 2);
+  const nivel = baseY(x) + PISO_LOCAL; // piso interno = soleira da porta = topo da rampa
+  return { x, largura: 3, z, nivel, alcance };
+})();
+
+// Interior: piso na altura da porta, lanternas, feno e a baia "SUA VAGA"
+function criarInterior() {
+  const g = new THREE.Group();
+  const nivel = PORTA.nivel;
+  const pos = [], idx = [];
+  const seg = 48;
+  for (let i = 0; i <= seg; i++) {
+    const x = -META_X + COMPRIMENTO * (i / seg);
+    const yLocal = nivel - baseY(x);
+    const w = yLocal > 0 ? Math.max(0, meiaLargura(x, yLocal) - 0.05) : 0;
+    pos.push(x, nivel, -w, x, nivel, w);
+  }
+  for (let i = 0; i < seg; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setIndex(idx);
+  geo.computeVertexNormals();
+  const piso = new THREE.Mesh(geo, material(new THREE.Color('#8f5a2a')));
+  piso.receiveShadow = true;
+  g.add(piso);
+
+  // Baias de madeira dos dois lados do corredor central
+  const corBaia = new THREE.Color('#7a4a22');
+  for (let i = -5; i <= 5; i++) {
+    const x = i * 2.6;
+    if (Math.abs(x - PORTA.x) < 2) continue; // corredor da porta livre
+    for (const lado of [-1, 1]) {
+      const w = meiaLargura(x, nivel - baseY(x));
+      if (w < 2.6) continue;
+      const divisoria = caixa(0.12, 1.2, w - 1.4, x, nivel + 0.6, lado * (1.4 + (w - 1.4) / 2), corBaia);
+      g.add(divisoria);
+      const feno = caixa(1.0, 0.5, 0.7, x + 1.2, nivel + 0.25, lado * (w - 0.8), new THREE.Color('#d8b65a'));
+      feno.rotation.y = 0.2 * lado;
+      g.add(feno);
+    }
+  }
+
+  // Lanternas (luz quente) penduradas no teto
+  const luzes = [];
+  for (const x of [-10, 0, 10]) {
+    const lanterna = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.4, 0.3), new THREE.MeshStandardMaterial({ color: '#ffcf6b', emissive: '#ffb340', emissiveIntensity: 1.5 }));
+    lanterna.position.set(x, baseY(x) + ALTURA - 1.2, 0);
+    const luz = new THREE.PointLight('#ffc070', 0, 26, 1.2);
+    luz.position.copy(lanterna.position);
+    g.add(lanterna, luz);
+    luzes.push(luz);
+  }
+
+  // Placa da sua vaga, logo na entrada
+  const c = document.createElement('canvas'); c.width = 512; c.height = 256;
+  const x = c.getContext('2d');
+  x.fillStyle = '#3d2614'; x.fillRect(0, 0, 512, 256);
+  x.strokeStyle = '#d9b45a'; x.lineWidth = 12; x.strokeRect(10, 10, 492, 236);
+  x.fillStyle = '#ffd23f'; x.font = '900 64px "DejaVu Sans", sans-serif'; x.textAlign = 'center';
+  x.fillText('🎟️ SUA VAGA', 256, 110);
+  x.fillStyle = '#fff'; x.font = '700 34px "DejaVu Sans", sans-serif';
+  x.fillText('reservada para ajudantes', 256, 175);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const placa = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.2), new THREE.MeshBasicMaterial({ map: tex }));
+  // De frente para a porta: é a primeira coisa que o visitante vê ao entrar
+  placa.position.set(PORTA.x, nivel + 1.55, -meiaLargura(PORTA.x, PISO_LOCAL + 1.55) + 0.3);
+  g.add(placa);
+
+  g.visible = false;
+  return { grupo: g, luzes };
 }
 
 // Quantos seguidores são necessários para liberar a peça i.
@@ -214,7 +293,16 @@ export class Arca {
       p.posicaoFinal = p.objeto.position.clone();
       this.grupo.add(p.objeto);
     }
+    this.interior = criarInterior();
+    this.grupo.add(this.interior.grupo);
   }
+
+  temPeca(nome) { return this.pecas.some((p) => p.nome === nome && p.objeto.visible); }
+
+  // Casco fechado = todas as tábuas no lugar (só então dá para "entrar" na arca)
+  cascoFechado() { return this.pecas.filter((p) => p.nome.startsWith('Tábua')).every((p) => p.objeto.visible); }
+
+  podeEntrar() { return this.cascoFechado() && this.temPeca('Porta') && this.temPeca('Rampa'); }
 
   get total() { return this.pecas.length; }
 
@@ -238,6 +326,9 @@ export class Arca {
       p.entrada = i >= jaProntas && i < liberadas ? inicio + (i - jaProntas) * intervalo : null;
     });
     this.fimDasEntradas = inicio + Math.max(0, liberadas - jaProntas) * intervalo + 0.8;
+    const fechado = this.cascoFechado();
+    this.interior.grupo.visible = fechado;
+    this.interior.luzes.forEach((l) => { l.intensity = fechado ? 6 : 0; });
   }
 
   atualizar(t) {

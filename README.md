@@ -15,6 +15,21 @@ os ajudantes aparecem em volta da obra e, no fim, os animais chegam em casais.
 - **Animais:** você escolhe quais casais entram, em `progresso.json`.
 - **Nomes:** os @ dos novos ajudantes do dia aparecem flutuando sobre eles.
 
+## Explorar a obra (site)
+
+No site, o botão **🎮 Explorar a obra** coloca o visitante na obra como um ajudante:
+
+- **Celular:** joystick no canto inferior esquerdo; arraste a tela para olhar em volta.
+- **Computador:** WASD ou setas para andar, Shift para correr, arraste com o mouse para girar a câmera.
+- **Noé:** trabalha sozinho num ciclo de ~27 s: busca tora na pilha → serra e prega na bancada → leva a tábua
+  pronta até a arca → admira a obra. Se o visitante chega perto, ele para, acena e conversa.
+- **Entrar na arca:** quando o casco estiver fechado e a porta e a rampa prontas, dá para subir a rampa e entrar.
+  Lá dentro há baias, feno, lanternas e a placa **🎟️ SUA VAGA**. Antes disso, dá para andar entre as costelas da obra.
+
+O progresso fica num painel pequeno no canto (toque no título para recolher), com o botão "Seguir" no outro canto.
+
+Para testar a arca pronta: http://localhost:8080/?seguidores=10000
+
 ## Rotina diária (5 minutos)
 
 1. Edite **`progresso.json`**:
@@ -98,7 +113,9 @@ Qualquer hospedagem estática serve. O caminho mais simples é o **GitHub Pages*
 | `js/arca.js` | Geometria da arca e ordem/limiar de cada peça |
 | `js/personagens.js` | Noé, ajudantes e animais |
 | `js/cenario.js` | Chão, árvores, montanhas, nuvens e clima |
-| `js/main.js` | Junta tudo: HUD, câmera, modo site e modo vídeo |
+| `js/main.js` | Junta tudo: painel, câmera, modo site, modo exploração e modo vídeo |
+| `js/jogador.js` | Modo exploração: avatar, joystick, teclado, colisões, rampa e porta |
+| `js/noe-rotina.js` | Rotina de trabalho do Noé (pilha → bancada → obra) e conversa |
 | `scripts/gravar-video.mjs` | Gera o MP4 vertical quadro a quadro |
 | `docs/plano-instagram.md` | Estratégia de conteúdo e legendas prontas |
 | `trailer.html` + `js/trailer.js` | Cenas do vídeo 01 (linha do tempo, chuva, raios, legendas) |

@@ -23,14 +23,15 @@ export class Cenario {
     cena.add(this.sol);
 
     // Chão: disco grande com leve ondulação (low-poly)
-    const chaoGeo = new THREE.CircleGeometry(120, 64);
+    // Chão em anéis: plano até 72 m (onde dá para caminhar) e com morros depois disso.
+    const chaoGeo = new THREE.RingGeometry(0, 140, 64, 36);
     chaoGeo.rotateX(-Math.PI / 2);
     const pos = chaoGeo.attributes.position;
     const r = aleatorio(7);
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i), z = pos.getZ(i);
       const d = Math.hypot(x, z);
-      if (d > 30) pos.setY(i, (r() - 0.3) * 0.8 + Math.max(0, d - 60) * 0.12);
+      pos.setY(i, d > 72 ? (r() - 0.3) * 0.9 + (d - 72) * 0.22 : 0);
     }
     chaoGeo.computeVertexNormals();
     const chao = new THREE.Mesh(chaoGeo, mat('#7fb24a'));
@@ -54,10 +55,11 @@ export class Cenario {
     const tronco = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.2, 0.3, 1.6, 5), mat('#6b4423'), 80);
     const copa = new THREE.InstancedMesh(new THREE.ConeGeometry(1.4, 3.2, 6), mat('#3f7d3a'), 80);
     const aux = new THREE.Object3D();
+    this.arvores = [];
     let n = 0;
     while (n < 80) {
       const a = r() * Math.PI * 2;
-      const d = 48 + r() * 34;
+      const d = 46 + r() * 23; // só na área plana (até 69 m)
       const x = Math.cos(a) * d, z = Math.sin(a) * d;
       const e = 0.7 + r() * 0.9;
       aux.rotation.set(0, r() * 6, 0);
@@ -65,6 +67,7 @@ export class Cenario {
       aux.position.set(x, 0.8 * e, z);
       aux.updateMatrix();
       tronco.setMatrixAt(n, aux.matrix);
+      this.arvores.push({ x, z, r: 0.35 * e + 0.1 });
       aux.position.set(x, (1.6 + 1.4) * e, z);
       aux.updateMatrix();
       copa.setMatrixAt(n, aux.matrix);
