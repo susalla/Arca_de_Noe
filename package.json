@@ -5,6 +5,8 @@
   "description": "Cada novo seguidor vira um ajudante do Noé na construção da arca em 3D.",
   "scripts": {
     "dev": "node scripts/servidor.mjs 8080",
-    "video": "node scripts/gravar-video.mjs"
+    "video": "node scripts/gravar-video.mjs",
+    "video:trailer": "node scripts/trailer.mjs",
+    "video:trailer:audio": "node scripts/trailer.mjs --so-audio"
   }
 }

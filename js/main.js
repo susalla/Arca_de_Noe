@@ -7,7 +7,7 @@ import { Cenario } from './cenario.js';
 const params = new URLSearchParams(location.search);
 const MODO_VIDEO = params.has('video');
 
-const PADRAO = { dia: 1, perfil: '@arcadonoe', seguidores: 0, seguidoresOntem: 0, meta: 10000, novosAjudantes: [], animais: [], animaisOntem: null };
+const PADRAO = { dia: 1, perfil: '@arca_do_noee', seguidores: 0, seguidoresOntem: 0, meta: 10000, novosAjudantes: [], animais: [], animaisOntem: null };
 
 async function carregarProgresso() {
   let dados = { ...PADRAO };

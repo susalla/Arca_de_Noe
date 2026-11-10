@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arca do Noé: Trailer</title>
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js" } }
+  </script>
+  <style>
+    :root { --amarelo: #ffd23f; --verde: #2e7d32; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+    body { font-family: "DejaVu Sans", "Trebuchet MS", system-ui, sans-serif; color: #fff; }
+    #palco { position: relative; width: 540px; height: 960px; margin: 0 auto; overflow: hidden; }
+    canvas { display: block; width: 540px; height: 960px; }
+
+    #escuro { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: linear-gradient(#0b1020, #1a2332 55%, #0d1418); mix-blend-mode: multiply; }
+    #flash { position: absolute; inset: 0; background: #eef4ff; opacity: 0; pointer-events: none; }
+    #vinheta { position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); }
+
+    #topo { position: absolute; top: 58px; left: 0; right: 0; text-align: center; }
+    #etiqueta { display: inline-block; padding: 7px 18px; border-radius: 999px; background: rgba(0,0,0,.55);
+      font-weight: 800; font-size: 21px; letter-spacing: .04em; border: 2px solid rgba(255,255,255,.25); }
+    #etiqueta.alerta { background: rgba(160, 20, 20, .8); }
+
+    #legenda { position: absolute; left: 34px; right: 34px; top: 585px; text-align: center;
+      font-weight: 900; font-size: 38px; line-height: 1.12; text-transform: uppercase;
+      paint-order: stroke fill; -webkit-text-stroke: 9px #000; letter-spacing: .01em; }
+    #legenda .p { display: inline-block; margin: 0 .13em; }
+    #legenda .em { color: var(--amarelo); }
+
+    #contador { position: absolute; top: 120px; left: 0; right: 0; text-align: center; font-weight: 900;
+      font-size: 64px; paint-order: stroke fill; -webkit-text-stroke: 10px #000; color: #7CFC7C; opacity: 0; }
+
+    #cartao { position: absolute; left: 50%; top: 175px; width: 420px; transform: translateX(-50%) scale(0);
+      background: #fff; color: #111; border-radius: 26px; padding: 22px 22px 24px; text-align: center;
+      box-shadow: 0 18px 50px rgba(0,0,0,.55); }
+    #cartao .avatar { width: 92px; height: 92px; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center;
+      font-size: 54px; background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7); }
+    #cartao .nome { font-weight: 900; font-size: 28px; }
+    #cartao .bio { font-size: 17px; color: #555; margin-top: 4px; }
+    #cartao .botao { margin-top: 16px; background: #0095f6; color: #fff; font-weight: 900; font-size: 26px;
+      border-radius: 14px; padding: 12px 0; }
+    #cursor { position: absolute; font-size: 54px; left: 330px; top: 395px; opacity: 0; }
+  </style>
+</head>
+<body>
+  <div id="palco">
+    <canvas id="cena"></canvas>
+    <div id="escuro"></div>
+    <div id="vinheta"></div>
+    <div id="flash"></div>
+    <div id="topo"><span id="etiqueta">DIA 1 · 0 AJUDANTES</span></div>
+    <div id="contador">+1</div>
+    <div id="legenda"></div>
+    <div id="cartao">
+      <div class="avatar">🧔🏻‍♂️</div>
+      <div class="nome">@arca_do_noee</div>
+      <div class="bio">Cada seguidor vira um ajudante da arca 🔨</div>
+      <div class="botao">Seguir</div>
+    </div>
+    <div id="cursor">👆</div>
+  </div>
+  <script type="module" src="js/trailer.js"></script>
+</body>
+</html>

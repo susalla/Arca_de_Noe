@@ -22,7 +22,7 @@ os ajudantes aparecem em volta da obra e, no fim, os animais chegam em casais.
    ```json
    {
      "dia": 12,
-     "perfil": "@arcadonoe",
+     "perfil": "@arca_do_noee",
      "seguidores": 340,
      "seguidoresOntem": 290,
      "meta": 10000,
@@ -45,6 +45,21 @@ os ajudantes aparecem em volta da obra e, no fim, os animais chegam em casais.
    Sai em `videos/dia-012.mp4`, já em 1080×1920 (formato de Reels/Stories), com 12 s ou mais.
 
 3. Publique o vídeo no Instagram e suba o `progresso.json` atualizado para o site.
+
+## Vídeo 01: "O dilúvio está vindo" (trailer de lançamento)
+
+Roteiro, gatilhos, texto da narração e legenda do post: [`docs/roteiro-video-01.md`](docs/roteiro-video-01.md).
+
+```bash
+npm run video:trailer
+```
+
+Gera em `videos/`: `video-01-instagram.mp4`, `video-01-tiktok.mp4` e `video-01-capa.jpg`.
+A trilha e os efeitos (trovão, chuva, marteladas, pops, impacto, coração) são sintetizados no ffmpeg e
+sincronizados com as cenas. Para incluir a voz do Noé, salve a narração em `audio/narracao.mp3` e rode
+`npm run video:trailer:audio` (reaproveita as imagens e só refaz o áudio). A música abaixa sozinha quando ele fala.
+
+Pré-visualização no navegador: http://localhost:8080/trailer.html
 
 ## Rodar localmente
 
@@ -86,6 +101,8 @@ Qualquer hospedagem estática serve. O caminho mais simples é o **GitHub Pages*
 | `js/main.js` | Junta tudo: HUD, câmera, modo site e modo vídeo |
 | `scripts/gravar-video.mjs` | Gera o MP4 vertical quadro a quadro |
 | `docs/plano-instagram.md` | Estratégia de conteúdo e legendas prontas |
+| `trailer.html` + `js/trailer.js` | Cenas do vídeo 01 (linha do tempo, chuva, raios, legendas) |
+| `scripts/trailer.mjs` | Trilha sintetizada + mixagem + exportação Instagram/TikTok |
 
 Tudo é low-poly e gerado por código, na escala de 1 unidade = 1 metro. Não há modelos 3D externos
 para importar nem problema de escala ou rotação na exportação. Os ajudantes usam instancing, então

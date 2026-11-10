@@ -117,6 +117,9 @@ export class Ajudantes {
     this.cabecas = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.19, 0), mat('#ffffff'), MAX_VISIVEIS);
     for (const m of [this.corpos, this.cabecas]) {
       m.castShadow = true;
+      // As posições mudam a cada quadro: sem isso o three.js usa uma área de
+      // visibilidade antiga e some com os bonecos quando a câmera não vê o centro.
+      m.frustumCulled = false;
       m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       this.grupo.add(m);
     }

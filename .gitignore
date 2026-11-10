@@ -2,3 +2,4 @@ node_modules/
 videos/
 .DS_Store
 .env
+audio/falas/

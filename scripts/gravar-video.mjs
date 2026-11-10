@@ -1,5 +1,5 @@
 // Grava o vídeo vertical do dia (1080x1920, 30 fps) para Reels/Stories.
-// Uso: node scripts/gravar-video.mjs [saida.mp4] [--seguidores=500 --ontem=420 ...]
+// Uso: node scripts/gravar-video.mjs [saida.mp4] [--pagina=trailer.html] [--seguidores=500 --ontem=420 ...]
 // Precisa de: Playwright (com Chromium) e ffmpeg instalados.
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
@@ -14,7 +14,9 @@ const FPS = 30;
 const args = process.argv.slice(2);
 const extras = new URLSearchParams();
 let saida = null;
+let pagina = '';
 for (const a of args) {
+  if (a.startsWith('--pagina=')) { pagina = a.slice(9); continue; }
   if (a.startsWith('--')) {
     const [k, v = ''] = a.slice(2).split('=');
     extras.set(k, v);
@@ -31,13 +33,14 @@ await new Promise((ok) => servidor.listen(0, ok));
 const porta = servidor.address().port;
 
 const navegador = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
-const pagina = await navegador.newPage({ viewport: { width: 540, height: 960 }, deviceScaleFactor: 2 });
-pagina.on('pageerror', (e) => console.error('Erro na página:', e.message));
+const paginaHtml = pagina;
+const aba = await navegador.newPage({ viewport: { width: 540, height: 960 }, deviceScaleFactor: 2 });
+aba.on('pageerror', (e) => console.error('Erro na página:', e.message));
 extras.set('video', '1');
 extras.set('gravando', '1');
-await pagina.goto(`http://localhost:${porta}/?${extras}`);
-await pagina.waitForFunction(() => window.__pronto === true, null, { timeout: 60000 });
-const duracao = await pagina.evaluate(() => window.__duracao);
+await aba.goto(`http://localhost:${porta}/${paginaHtml}?${extras}`);
+await aba.waitForFunction(() => window.__pronto === true, null, { timeout: 60000 });
+const duracao = await aba.evaluate(() => window.__duracao);
 const total = Math.ceil(duracao * FPS);
 console.log(`Gravando ${duracao.toFixed(1)}s (${total} quadros) → ${saida}`);
 
@@ -51,8 +54,8 @@ const ffmpeg = spawn('ffmpeg', [
 const terminou = new Promise((ok, erro) => ffmpeg.on('close', (c) => (c === 0 ? ok() : erro(new Error(`ffmpeg saiu com código ${c}`)))));
 
 for (let i = 0; i < total; i++) {
-  await pagina.evaluate((t) => window.__renderizarEm(t), i / FPS);
-  const quadro = await pagina.screenshot({ type: 'png' });
+  await aba.evaluate((t) => window.__renderizarEm(t), i / FPS);
+  const quadro = await aba.screenshot({ type: 'png' });
   if (!ffmpeg.stdin.write(quadro)) await new Promise((ok) => ffmpeg.stdin.once('drain', ok));
   if (i % FPS === 0) process.stdout.write(`\r${Math.round((i / total) * 100)}%`);
 }
