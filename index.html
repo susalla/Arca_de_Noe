@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>A Arca do Noé</title>
+  <meta name="description" content="Cada novo seguidor vira um ajudante do Noé. Venha ver a arca sendo construída dia após dia.">
+  <link rel="stylesheet" href="css/estilo.css">
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js" } }
+  </script>
+</head>
+<body>
+  <canvas id="cena"></canvas>
+
+  <div id="hud">
+    <header>
+      <div class="titulo">A ARCA DO NOÉ</div>
+      <div class="dia" id="hud-dia">Dia 1</div>
+      <div><div id="ganho" class="ganho" hidden></div></div>
+    </header>
+
+    <footer>
+      <div class="ajudantes"><span id="hud-ajudantes">0</span> <small id="hud-ajudantes-rotulo">ajudantes</small></div>
+      <div class="barra"><div class="barra-preenchida" id="hud-barra"></div></div>
+      <div class="barra-legenda"><span>Arca</span><span id="hud-porcentagem">0%</span></div>
+      <div class="proxima" id="hud-proxima"></div>
+      <div class="animais" id="hud-animais"></div>
+      <div class="cta">Siga <b id="hud-perfil">@arcadonoe</b> e vire um ajudante 🔨</div>
+    </footer>
+  </div>
+
+  <div id="carregando">Chamando o Noé…</div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
