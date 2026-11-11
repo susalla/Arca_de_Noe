@@ -165,7 +165,7 @@ rodar('ffmpeg', ['-y', '-loglevel', 'error', '-i', IMAGEM, '-i', TRILHA,
 // Capa: o contador marcando 378 com o Noé de mãos na cabeça
 const CAPA = resolve(VIDEOS, 'video-04-capa.jpg');
 const ttf = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
-rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '7.9', '-i', IMAGEM, '-frames:v', '1',
+rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '8.15', '-i', IMAGEM, '-frames:v', '1',
   '-vf', `drawbox=y=ih*0.62:w=iw:h=ih*0.2:color=black@0.6:t=fill,` +
     `drawtext=fontfile=${ttf}:text='ERA PRA SER 200…':fontcolor=white:fontsize=78:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.635,` +
     `drawtext=fontfile=${ttf}:text='CHEGARAM 378!':fontcolor=0xffd23f:fontsize=108:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.71`,
