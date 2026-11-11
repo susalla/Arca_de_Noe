@@ -112,6 +112,115 @@ export class Noe {
   }
 }
 
+// ------------------------------------------------------------ Vizinho
+// Personagem dos avulsos de humor: mesma base dos ajudantes (corpo de cone e
+// cabeça low-poly), em tamanho de gente, com chapéu de palha e túnica roxa.
+export class Vizinho {
+  constructor() {
+    const g = new THREE.Group();
+    this.roupa = mat('#7d4fa1');
+    this.pele = mat('#d9a066');
+    const corpo = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.48, 1.3, 8), this.roupa);
+    corpo.position.y = 0.65;
+    const cinto = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.36, 0.1, 8), mat('#5a3a1d'));
+    cinto.position.y = 0.9;
+    this.cabeca = new THREE.Group();
+    this.cabeca.position.y = 1.55;
+    const rosto = new THREE.Mesh(new THREE.IcosahedronGeometry(0.27, 1), this.pele);
+    for (const lado of [-1, 1]) {
+      const olho = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 4), mat('#1b1b1b'));
+      olho.position.set(lado * 0.09, 0.05, 0.24);
+      const sobrancelha = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.025, 0.03), mat('#3b2414'));
+      sobrancelha.position.set(lado * 0.09, 0.13, 0.245);
+      sobrancelha.rotation.z = lado * -0.25; // cara de deboche
+      this.cabeca.add(olho, sobrancelha);
+    }
+    const bigode = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.05, 0.05), mat('#3b2414'));
+    bigode.position.set(0, -0.06, 0.25);
+    // Chapéu de palha (aba larga + copa)
+    this.chapeu = new THREE.Group();
+    const palha = mat('#e2c46b');
+    const aba = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.6, 0.04, 14), palha);
+    const copa = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.27, 0.22, 10), palha);
+    copa.position.y = 0.12;
+    const fita = new THREE.Mesh(new THREE.CylinderGeometry(0.275, 0.275, 0.05, 10), mat('#a8322d'));
+    fita.position.y = 0.04;
+    this.chapeu.add(aba, copa, fita);
+    this.chapeu.position.y = 0.2;
+    this.chapeu.rotation.z = 0.12;
+    this.cabeca.add(rosto, bigode, this.chapeu);
+
+    // Braços: grupos no ombro, a manga aponta para baixo
+    const braco = (lado) => {
+      const b = new THREE.Group();
+      b.position.set(lado * 0.38, 1.18, 0);
+      const manga = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.58, 6), this.roupa);
+      manga.position.y = -0.27;
+      const mao = new THREE.Mesh(new THREE.IcosahedronGeometry(0.08, 0), this.pele);
+      mao.position.y = -0.58;
+      b.add(manga, mao);
+      return b;
+    };
+    this.bracoEsq = braco(-1);
+    this.bracoDir = braco(1);
+    // Martelo (só no final, quando ele vira ajudante)
+    this.martelo = new THREE.Group();
+    const cabo = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.5, 6), mat('#5a3a1d'));
+    cabo.position.set(0, -0.6, 0.18);
+    cabo.rotation.x = Math.PI / 2;
+    const ferro = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.24), mat('#6e6e6e'));
+    ferro.position.set(0, -0.6, 0.42);
+    ferro.rotation.x = Math.PI / 2;
+    this.martelo.add(cabo, ferro);
+    this.martelo.visible = false;
+    this.bracoDir.add(this.martelo);
+
+    this.pes = [-1, 1].map((lado) => {
+      const pe = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.1, 0.28), mat('#4a3020'));
+      pe.position.set(lado * 0.15, 0.05, 0.05);
+      return pe;
+    });
+    this.corpo = new THREE.Group();
+    this.corpo.add(corpo, cinto, this.cabeca, this.bracoEsq, this.bracoDir);
+    g.add(this.corpo, ...this.pes);
+    g.scale.setScalar(1.18);
+    this.grupo = sombra(g);
+  }
+
+  // Encharcado: roupa e pele mais escuras e brilhantes
+  molhar(k) {
+    this.roupa.color.set('#7d4fa1').lerp(new THREE.Color('#3f2758'), k);
+    this.roupa.roughness = 0.85 - k * 0.5;
+    this.pele.roughness = 0.85 - k * 0.45;
+  }
+
+  // Pose neutra (antes de cada quadro)
+  neutro() {
+    this.corpo.rotation.set(0, 0, 0);
+    this.corpo.position.set(0, 0, 0);
+    this.cabeca.rotation.set(0, 0, 0);
+    this.bracoEsq.rotation.set(0, 0, 0.15);
+    this.bracoDir.rotation.set(0, 0, -0.15);
+    this.pes.forEach((p, i) => p.position.set((i ? 1 : -1) * 0.15, 0.05, 0.05));
+    this.chapeu.position.set(0, 0.2, 0);
+    this.chapeu.rotation.set(0, 0, 0.12);
+    this.martelo.visible = false;
+  }
+
+  bracosCruzados() {
+    this.bracoDir.rotation.set(-1.25, 0, -1.15);
+    this.bracoEsq.rotation.set(-1.15, 0, 1.15);
+  }
+
+  andar(t, velocidade = 9, amplitude = 0.2) {
+    const passo = Math.sin(t * velocidade);
+    this.pes[0].position.z = 0.05 + passo * amplitude;
+    this.pes[1].position.z = 0.05 - passo * amplitude;
+    this.corpo.position.y = Math.abs(passo) * 0.06;
+    return passo;
+  }
+}
+
 // ---------------------------------------------------------- Ajudantes
 // Um ajudante por seguidor, desenhados com InstancedMesh (2 draw calls para
 // centenas de bonecos). Acima de MAX_VISIVEIS a contagem continua no HUD.

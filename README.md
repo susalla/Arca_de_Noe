@@ -86,6 +86,13 @@ Roteiro e legenda: [`docs/roteiro-video-02.md`](docs/roteiro-video-02.md). Gere 
 legenda palavra por palavra, menor e na parte de baixo, fora das áreas cobertas pelos botões do app;
 cada vídeo é um "dia da obra" (o tempo é relativo onde o Noé está).
 
+## Vídeos avulsos (fora da obra)
+
+Vídeos só para engajar, que não avançam a arca. Ideias e roteiros: [`docs/roteiros-avulsos.md`](docs/roteiros-avulsos.md).
+
+- **POV "barco a 500 km do mar"** (Noé + Vizinho, duas vozes): [`docs/roteiro-avulso-pov.md`](docs/roteiro-avulso-pov.md).
+  Gere com `npm run video:pov` (saída: `videos/avulso-pov.mp4` + capa).
+
 ## Rodar localmente
 
 ```bash
