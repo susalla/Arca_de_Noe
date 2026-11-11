@@ -50,7 +50,10 @@ const cena = (nome) => { const i = T.CENAS.findIndex((c) => c[1] === nome); retu
 const [, FIM_SOL] = cena('tchau');      // até aqui é dia de sol
 const [INI_PRETO] = cena('preto');
 const [INI_CHUVA] = cena('chuva');
+const [INI_PRES] = cena('pressentimento');
+const [INI_VISAO, FIM_VISAO] = cena('visao');
 const [INI_FINAL] = cena('final');
+const foraDaVisao = `(1-between(t,${INI_VISAO},${FIM_VISAO}))`;
 const [g0, g1] = MARCOS.grilos;
 
 // Marteladas (madeira + prego): as do Noé um pouco mais fortes que as do vizinho
@@ -85,8 +88,8 @@ fonte(ruido('brown', 5), `lowpass=f=300,volume='${TROVOES.map(([h, s]) => `if(gt
 fonte(ruido('white', 6), `highpass=f=1500,lowpass=f=8000,volume='${TROVOES.map(([h]) => `if(gte(t,${f(h)}),exp(-(t-${f(h)})*9),0)`).join('+')}':eval=frame,volume=0.7`, 'estalo');
 
 // Chuva e vento (da tela preta até o fim)
-fonte(ruido('pink', 7), `highpass=f=700,lowpass=f=9000,volume='if(gt(t,${INI_PRETO + 0.2}),clip((t-${INI_PRETO + 0.2})/1.2,0,1),0)':eval=frame,volume=0.38`, 'chuva');
-fonte(ruido('pink', 8), `bandpass=f=600:width_type=q:w=0.6,volume='if(gt(t,${INI_PRETO}),0.6+0.4*sin(2*PI*0.4*t),0)':eval=frame,volume=0.35`, 'vento');
+fonte(ruido('pink', 7), `highpass=f=700,lowpass=f=9000,volume='if(gt(t,${INI_PRETO + 0.2}),clip((t-${INI_PRETO + 0.2})/1.2,0,1),0)*${foraDaVisao}':eval=frame,volume=0.38`, 'chuva');
+fonte(ruido('pink', 8), `bandpass=f=600:width_type=q:w=0.6,volume='if(gt(t,${INI_PRETO}),(0.6+0.4*sin(2*PI*0.4*t))*${foraDaVisao},0)':eval=frame,volume=0.35`, 'vento');
 
 // Feixe dourado: subida + brilho + "plim"
 const F = MARCOS.feixe;
@@ -96,6 +99,26 @@ fonte(ruido('pink', 9), `bandpass=f=1200:width_type=q:w=0.6,volume='if(between(t
 
 // Cartão: pop e clique
 fonte(aeval(somaDe([MARCOS.cartao], '0.6*sin(2*PI*(600+900*T)*T)*exp(-T*14)') + `+${somaDe([MARCOS.toque], '0.7*sin(2*PI*2400*T)*exp(-T*90)')}`), 'volume=0.3', 'cartao');
+
+// Cachorro latindo para o vizinho
+fonte(aeval(somaDe(MARCOS.latidos, '(0.7*sin(2*PI*(420-180*T/0.16)*T)+0.4*sin(2*PI*(840-300*T/0.16)*T))*lt(T,0.16)*(1-T/0.16)')), 'volume=0.45', 'latido');
+// Rugido dos leões (dois, um logo depois do outro) + pulo do vizinho
+const RU = MARCOS.rugido;
+fonte(ruido('brown', 10), `bandpass=f=220:width_type=q:w=1.4,volume='${[RU, RU + 0.12].map((h) => `if(gte(t,${f(h)}),lt(t-${f(h)},1.3)*(0.6+0.4*sin(2*PI*22*(t-${f(h)})))*sin(PI*(t-${f(h)})/1.3),0)`).join('+')}':eval=frame,volume=7`, 'rugido');
+fonte(aeval(somaDe([RU], 'lt(T,1.3)*sin(PI*T/1.3)*0.6*sin(2*PI*(85+20*sin(2*PI*3*T))*T)')), 'volume=0.6', 'rugidoGrave');
+fonte(aeval(somaDe([RU + 0.05, MARCOS.susto], '0.6*sin(2*PI*(500+1400*T)*T)*exp(-T*10)')), 'volume=0.2', 'boing');
+// Entrada e saída da visão: "whoosh" + brilho
+const VIS = [MARCOS.flashVisao, MARCOS.flashVolta];
+fonte(ruido('white', 11), `bandpass=f=2500:width_type=q:w=0.5,volume='${VIS.map((h) => `if(between(t,${f(h - 0.6)},${f(h + 0.3)}),sin(PI*(t-${f(h - 0.6)})/0.9),0)`).join('+')}':eval=frame,volume=0.5`, 'whoosh');
+fonte(aeval(somaDe(VIS, '(0.5*sin(2*PI*1318.5*T)*exp(-T*3)+0.4*sin(2*PI*1975.5*T)*exp(-T*2.5)+0.3*sin(2*PI*2637*T)*exp(-T*2))')), 'volume=0.22', 'brilhoVisao');
+// Na visão: passos da multidão, burburinho e bichos (mugido e balido)
+fonte(ruido('pink', 12), `bandpass=f=900:width_type=q:w=0.7,volume='if(between(t,${INI_VISAO},${FIM_VISAO}),(0.6+0.4*sin(2*PI*2.2*t))*sin(PI*(t-${INI_VISAO})/${(FIM_VISAO - INI_VISAO).toFixed(2)}),0)':eval=frame,volume=0.45`, 'multidao');
+fonte(aeval(somaDe([INI_VISAO + 1.2, INI_VISAO + 3.3], 'lt(T,0.9)*sin(PI*T/0.9)*0.6*sin(2*PI*(130-25*T)*T+2*sin(2*PI*5*T))') + `+${somaDe([INI_VISAO + 2.2, INI_VISAO + 4.4], 'lt(T,0.5)*sin(PI*T/0.5)*0.5*sin(2*PI*(520+40*sin(2*PI*18*T))*T)')}`), 'volume=0.35', 'bichos');
+// Contador subindo até 200: tique-tique e "tchan" no final
+const [ct0, ct1] = MARCOS.contador;
+const tiques = [];
+for (let x = ct0; x < ct1; x += 0.12) tiques.push(+x.toFixed(3));
+fonte(aeval(somaDe(tiques, '0.4*sin(2*PI*2200*T)*exp(-T*60)') + `+${somaDe([ct1], '(0.6*sin(2*PI*587.33*T)+0.5*sin(2*PI*739.99*T)+0.4*sin(2*PI*880*T))*exp(-T*2.5)')}`), 'volume=0.3', 'contador');
 
 // Música
 const arpejo = (ini, fim, passo, notas, vol) => {
@@ -111,11 +134,16 @@ const sol1 = arpejo(0, g0 - 0.05, 0.275, despreocupado, '0.8');
 const sol2 = arpejo(MARCOS.olhaCeu[1] + 0.9, INI_PRETO - 0.05, 0.275, despreocupado, '0.8');
 // Chuva: tenso no retorno do vizinho, heroico quando vira ajudante, animado no final
 const tenso = arpejo(INI_CHUVA, F - 0.4, 0.3, [220, 261.63, 329.63, 261.63], '0.6');
-const heroico = arpejo(F, INI_FINAL, 0.2, [293.66, 369.99, 440, 587.33], '0.9');
+const heroico = arpejo(F, INI_PRES, 0.2, [293.66, 369.99, 440, 587.33], '0.9');
+const misterio = arpejo(INI_PRES, INI_VISAO, 0.4, [587.33, 880, 739.99, 880], '0.45');
+const visao = arpejo(INI_VISAO, FIM_VISAO, 0.16, [293.66, 369.99, 440, 587.33, 739.99, 587.33, 440, 369.99], '0.9');
 const final = arpejo(INI_FINAL, D - 0.2, 0.18, [293.66, 369.99, 440, 369.99, 392, 493.88, 587.33, 493.88], '0.8');
-fonte(aeval(`${sol1}+${sol2}+${tenso}+${heroico}+${final}`), 'lowpass=f=3400,volume=0.15', 'musica');
+fonte(aeval(`${sol1}+${sol2}+${tenso}+${heroico}+${misterio}+${visao}+${final}`), 'lowpass=f=3400,volume=0.15', 'musica');
+// Coro (acorde aberto de ré maior) crescendo no pressentimento e cheio na visão
+const coro = [146.83, 220, 293.66, 369.99, 440].map((hz, i) => `${[0.5, 0.4, 0.35, 0.3, 0.25][i]}*sin(2*PI*${hz}*t+0.4*sin(2*PI*5*t))`).join('+');
+fonte(aeval(`(${coro})*(if(between(t,${INI_PRES + 1.4},${INI_VISAO}),clip((t-${INI_PRES + 1.4})/1.2,0,1)*0.6,0)+if(between(t,${INI_VISAO},${FIM_VISAO}),clip((${FIM_VISAO}-t)/0.4,0,1),0))`), 'lowpass=f=2400,volume=0.2', 'coro');
 const drone = '(0.5*sin(2*PI*73.42*t)+0.35*sin(2*PI*110*t)+0.25*sin(2*PI*146.83*t))*(0.8+0.2*sin(2*PI*0.4*t))';
-fonte(aeval(`(${drone})*if(gt(t,${INI_CHUVA}),0.6+0.4*clip((t-${F})/1,0,1),0)`), 'lowpass=f=1000,volume=0.18', 'drone');
+fonte(aeval(`(${drone})*if(gt(t,${INI_CHUVA}),0.6+0.4*clip((t-${F})/1,0,1),0)*${foraDaVisao}`), 'lowpass=f=1000,volume=0.18', 'drone');
 
 filtros.push(`${camadas.map((c) => `[${c}]`).join('')}amix=inputs=${camadas.length}:normalize=0,afade=t=out:st=${D - 0.3}:d=0.3,aformat=channel_layouts=stereo[efeitos]`);
 
