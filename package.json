@@ -13,6 +13,8 @@
     "video:03": "node scripts/narracao.mjs --video=03 && node scripts/video03.mjs",
     "video:03:audio": "node scripts/narracao.mjs --video=03 && node scripts/video03.mjs --so-audio",
     "video:pov": "node scripts/narracao.mjs --video=avulso-pov && node scripts/avulso-pov.mjs",
-    "video:pov:audio": "node scripts/narracao.mjs --video=avulso-pov && node scripts/avulso-pov.mjs --so-audio"
+    "video:pov:audio": "node scripts/narracao.mjs --video=avulso-pov && node scripts/avulso-pov.mjs --so-audio",
+    "video:04": "node scripts/narracao.mjs --video=04 && node scripts/video04.mjs",
+    "video:04:audio": "node scripts/narracao.mjs --video=04 && node scripts/video04.mjs --so-audio"
   }
 }

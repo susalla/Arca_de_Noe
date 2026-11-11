@@ -86,6 +86,12 @@ Roteiro e legenda: [`docs/roteiro-video-02.md`](docs/roteiro-video-02.md). Gere 
 legenda palavra por palavra, menor e na parte de baixo, fora das áreas cobertas pelos botões do app;
 cada vídeo é um "dia da obra" (o tempo é relativo onde o Noé está).
 
+## Vídeo 04: "Era pra ser 200… chegaram 378!"
+
+Roteiro e legenda: [`docs/roteiro-video-04.md`](docs/roteiro-video-04.md). Gere com `npm run video:04`
+(saída: `videos/video-04.mp4` + capa). Os comentários aparecem como cartão de texto (@ + comentário),
+e os 100 seguidores mais novos sobem na tela como créditos.
+
 ## Vídeos avulsos (fora da obra)
 
 Vídeos só para engajar, que não avançam a arca. Ideias e roteiros: [`docs/roteiros-avulsos.md`](docs/roteiros-avulsos.md).
