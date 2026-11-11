@@ -9,6 +9,8 @@
     "video:trailer": "node scripts/trailer.mjs",
     "video:trailer:audio": "node scripts/trailer.mjs --so-audio",
     "video:02": "node scripts/narracao.mjs --video=02 && node scripts/video02.mjs",
-    "video:02:audio": "node scripts/narracao.mjs --video=02 && node scripts/video02.mjs --so-audio"
+    "video:02:audio": "node scripts/narracao.mjs --video=02 && node scripts/video02.mjs --so-audio",
+    "video:03": "node scripts/narracao.mjs --video=03 && node scripts/video03.mjs",
+    "video:03:audio": "node scripts/narracao.mjs --video=03 && node scripts/video03.mjs --so-audio"
   }
 }

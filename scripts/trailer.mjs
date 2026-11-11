@@ -145,7 +145,7 @@ const narracao = ['mp3', 'wav', 'm4a'].map((e) => resolve(RAIZ, `audio/narracao.
 if (narracao) {
   console.log(`Narração encontrada: ${narracao}`);
   entradas.push('-i', narracao);
-  filtros.push(`[${n}:a]aresample=${SR},pan=stereo|c0=c0|c1=c0,highpass=f=80,acompressor=threshold=-18dB:ratio=3:attack=5:release=120,volume=1.6,asplit=2[voz][chave]`);
+  filtros.push(`[${n}:a]aresample=${SR},pan=stereo|c0=c0|c1=c0,highpass=f=80,acompressor=threshold=-18dB:ratio=3:attack=5:release=120,volume=1.6,apad=whole_dur=${D},asplit=2[voz][chave]`);
   filtros.push(`[efeitos]aformat=channel_layouts=stereo[ef]`);
   filtros.push(`[ef][chave]sidechaincompress=threshold=0.04:ratio=6:attack=15:release=300[abaixado]`);
   filtros.push(`[abaixado][voz]amix=inputs=2:normalize=0:duration=first[mix]`);

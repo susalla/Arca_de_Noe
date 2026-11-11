@@ -262,11 +262,102 @@ export const TIPOS_DE_ANIMAIS = {
   camelo:   { emoji: '🐫', corpo: [1.6, 0.8, 0.6], perna: 1.2, pescoco: 0.7, cabeca: 0.35, cor: '#c9a26b', corcova: true },
   pinguim:  { emoji: '🐧', corpo: [0.45, 0.5, 0.45], perna: 0.1, pescoco: 0.05, cabeca: 0.28, cor: '#222222', corCabeca: '#222222' },
   jacare:   { emoji: '🐊', corpo: [1.9, 0.34, 0.62], perna: 0.16, pescoco: 0.02, cabeca: 0.3, cor: '#4e7d3a', focinho: 0.8, dentes: true, raboLongo: 1.7, escamas: '#3a6330' },
+  pantera:  { emoji: '🐈‍⬛', corpo: [1.5, 0.62, 0.55], perna: 0.58, pescoco: 0.18, cabeca: 0.42, cor: '#17171c', corOlho: '#f1c40f', orelhinhas: true, raboLongo: 1.1 },
+  aguia:    { emoji: '🦅', passaro: true, tamanho: 1.25, cor: '#5a3a20', corCabeca: '#f3efe6', bico: '#f2b822', asa: '#4a2f18' },
+  gaviao:   { emoji: '🦅', passaro: true, tamanho: 1.0, cor: '#7a6248', corCabeca: '#8a7358', peito: '#e9dcc4', bico: '#2b2b2b', asa: '#5e4a36' },
+  urubu:    { emoji: '🐦‍⬛', passaro: true, tamanho: 1.15, cor: '#1c1c1f', corCabeca: '#4a4a50', bico: '#9a9a9a', asa: '#141416', careca: true },
+  picapau:  { emoji: '🐦', passaro: true, tamanho: 0.75, cor: '#1f1f22', corCabeca: '#c0392b', peito: '#f2f2f2', bico: '#d9a531', asa: '#2a2a2e', crista: '#d62d20', bicoLongo: true, listras: '#f2f2f2' },
   onca:     { emoji: '🐆', corpo: [1.45, 0.6, 0.55], perna: 0.55, pescoco: 0.18, cabeca: 0.42, cor: '#e3a63d', manchas: '#3a2410', manchasQtd: 16, orelhinhas: true, raboLongo: 1.0 },
 };
 
+// Pássaro low-poly, de frente para +x (como os outros animais), com asas que batem.
+export function criarPassaro(p) {
+  const g = new THREE.Group();
+  const e = p.tamanho || 1;
+  const corpo = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), mat(p.cor));
+  corpo.scale.set(1.35, 0.9, 0.85);
+  corpo.position.y = 0.55;
+  g.add(corpo);
+  if (p.peito) {
+    const peito = new THREE.Mesh(new THREE.SphereGeometry(0.22, 7, 5), mat(p.peito));
+    peito.scale.set(0.9, 1, 0.9);
+    peito.position.set(0.16, 0.5, 0);
+    g.add(peito);
+  }
+  const cabeca = new THREE.Group();
+  cabeca.position.set(0.36, 0.86, 0);
+  const cranio = new THREE.Mesh(new THREE.SphereGeometry(p.careca ? 0.13 : 0.16, 7, 5), mat(p.corCabeca || p.cor));
+  cabeca.add(cranio);
+  const bico = new THREE.Mesh(new THREE.ConeGeometry(0.055, p.bicoLongo ? 0.36 : 0.2, 5), mat(p.bico));
+  bico.rotation.z = -Math.PI / 2 + (p.bicoLongo ? 0 : 0.35);
+  bico.position.set(p.bicoLongo ? 0.3 : 0.2, p.bicoLongo ? 0 : -0.03, 0);
+  cabeca.add(bico);
+  for (const lado of [-1, 1]) {
+    const olho = new THREE.Mesh(new THREE.SphereGeometry(0.03, 5, 4), mat(p.careca ? '#c0392b' : '#111'));
+    olho.position.set(0.09, 0.04, lado * 0.12);
+    cabeca.add(olho);
+  }
+  if (p.crista) {
+    const crista = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.26, 5), mat(p.crista));
+    crista.rotation.z = 0.7;
+    crista.position.set(-0.08, 0.15, 0);
+    cabeca.add(crista);
+  }
+  if (p.careca) { // urubu: pescoço pelado e "colarinho" de penas
+    const colar = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.06, 5, 8), mat(p.cor));
+    colar.rotation.y = Math.PI / 2;
+    colar.position.set(0.3, 0.74, 0);
+    g.add(colar);
+  }
+  g.add(cabeca);
+  const asas = [-1, 1].map((lado) => {
+    const pivo = new THREE.Group();
+    pivo.position.set(0, 0.7, lado * 0.2);
+    const asa = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.05, 0.75), mat(p.asa));
+    asa.position.set(-0.05, 0, lado * 0.36);
+    pivo.add(asa);
+    if (p.listras) for (let i = 0; i < 3; i++) {
+      const l = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.055, 0.6), mat(p.listras));
+      l.position.set(-0.22 + i * 0.16, 0.002, lado * 0.38);
+      pivo.add(l);
+    }
+    pivo.userData.lado = lado;
+    g.add(pivo);
+    return pivo;
+  });
+  const cauda = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.05, 0.28), mat(p.asa));
+  cauda.position.set(-0.48, 0.52, 0);
+  cauda.rotation.z = 0.25;
+  g.add(cauda);
+  const pernas = [-1, 1].map((lado) => {
+    const perna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.3, 4), mat('#c9a227'));
+    perna.position.set(0.02, 0.17, lado * 0.1);
+    g.add(perna);
+    return perna;
+  });
+  g.scale.setScalar(e);
+  g.userData.asas = asas;
+  g.userData.cabeca = cabeca;
+  g.userData.pernas = [];
+  g.userData.patas = pernas;
+  return sombra(g);
+}
+
+// Bate as asas (abertura de 0 = fechada a 1 = aberta; fase anima o bater)
+export function baterAsas(passaro, abertura, fase) {
+  for (const a of passaro.userData.asas || []) {
+    // fechada: asa caída junto ao corpo (1,35 rad); aberta: sobe e desce com a fase
+    a.rotation.x = a.userData.lado * THREE.MathUtils.lerp(1.35, -0.9 * Math.sin(fase), abertura);
+  }
+}
+
 export function criarAnimal(tipo, semente) {
   const p = TIPOS_DE_ANIMAIS[tipo];
+  if (p.passaro) {
+    const passaro = criarPassaro(p);
+    baterAsas(passaro, 0, 0);
+    return passaro;
+  }
   const g = new THREE.Group();
   const [cl, ca, cp] = p.corpo;
   const corpoMat = mat(p.cor);
@@ -312,7 +403,7 @@ export function criarAnimal(tipo, semente) {
   g.add(cabeca);
 
   for (const sz of [-1, 1]) {
-    const olho = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.02), mat('#111'));
+    const olho = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.02), mat(p.corOlho || '#111'));
     olho.position.set(cabeca.position.x + p.cabeca * 0.35, cabeca.position.y + p.cabeca * 0.15, sz * p.cabeca * 0.46);
     g.add(olho);
   }
@@ -407,7 +498,7 @@ export class Animais {
     const validos = tipos.filter((t) => TIPOS_DE_ANIMAIS[t]);
     let distancia = 0;
     validos.forEach((tipo, k) => {
-      const tamanho = TIPOS_DE_ANIMAIS[tipo].corpo[0];
+      const tamanho = TIPOS_DE_ANIMAIS[tipo].corpo?.[0] ?? 0.9; // pássaros não têm "corpo" de caixa
       distancia += tamanho * 0.6 + 0.9;
       for (const lado of [-1, 1]) {
         const a = criarAnimal(tipo, k * 31 + lado);

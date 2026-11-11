@@ -94,7 +94,20 @@ const stt = spawnSync('curl', ['-sS', '-X', 'POST', 'https://api.elevenlabs.io/v
   '-H', `xi-api-key: ${CHAVE}`, '-F', 'model_id=scribe_v2', '-F', 'language_code=por', '-F', `file=@${saida}`]);
 try {
   const d = JSON.parse(stt.stdout.toString());
-  const palavras = d.words.filter((w) => w.type === 'word').map((w) => ({ t: +w.start.toFixed(2), fim: +w.end.toFixed(2), p: w.text }));
+  const palavras = d.words.filter((w) => w.type === 'word').map((w) => ({ t: w.start, fim: w.end, p: w.text }));
+  // Cada fala começa exatamente no início da janela (adelay). Se a transcrição
+  // marcar o início um pouco antes/depois, corrige o desvio fala por fala.
+  const contagens = TEMPOS.FALAS.map((f) => f[2].split(' ').length);
+  if (palavras.length === contagens.reduce((a, b) => a + b, 0)) {
+    let k = 0;
+    TEMPOS.FALAS.forEach(([ini], i) => {
+      const grupo = palavras.slice(k, k + contagens[i]);
+      const desvio = ini - grupo[0].t;
+      if (Math.abs(desvio) < 0.6) grupo.forEach((w) => { w.t += desvio; w.fim += desvio; });
+      k += contagens[i];
+    });
+  }
+  palavras.forEach((w) => { w.t = +w.t.toFixed(2); w.fim = +w.fim.toFixed(2); });
   writeFileSync(SAIDA_PALAVRAS, JSON.stringify(palavras, null, 1) + '\n');
   console.log(`Transcrição: ${d.text}`);
 } catch {

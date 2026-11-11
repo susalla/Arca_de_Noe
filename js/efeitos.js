@@ -77,10 +77,16 @@ export class Legendas {
   constructor(elemento, falas, palavras = []) {
     this.el = elemento;
     this.falas = falas;
-    this.tokens = falas.map(([ini, fim, texto]) => {
-      const tokens = texto.split(' ').map((tk) => ({ texto: tk.replaceAll('*', ''), destaque: tk.includes('*') }));
-      const ditas = palavras.filter((w) => w.t >= ini - 0.15 && w.t < fim);
-      tokens.forEach((tk, k) => { tk.t = ditas.length === tokens.length ? ditas[k].t : ini + ((fim - ini - 0.4) * k) / tokens.length; });
+    const listas = falas.map(([, , texto]) => texto.split(' ').map((tk) => ({ texto: tk.replaceAll('*', ''), destaque: tk.includes('*') })));
+    const total = listas.reduce((n, l) => n + l.length, 0);
+    // Se a transcrição tem exatamente as mesmas palavras das legendas, distribui em ordem
+    // (robusto a pequenas diferenças de tempo); senão, usa a janela de tempo de cada fala.
+    let k = 0;
+    this.tokens = listas.map((tokens, i) => {
+      const [ini, fim] = falas[i];
+      const ditas = palavras.length === total ? palavras.slice(k, k + tokens.length) : palavras.filter((w) => w.t >= ini - 0.15 && w.t < fim);
+      k += tokens.length;
+      tokens.forEach((tk, j) => { tk.t = ditas.length === tokens.length ? ditas[j].t : ini + ((fim - ini - 0.4) * j) / tokens.length; });
       return tokens;
     });
   }

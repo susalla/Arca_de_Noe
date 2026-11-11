@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arca do Noé: A chuva está chegando</title>
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js" } }
+  </script>
+  <style>
+    :root { --amarelo: #ffd23f; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+    body { font-family: "DejaVu Sans", "Trebuchet MS", system-ui, sans-serif; color: #fff; }
+    #palco { position: relative; width: 540px; height: 960px; margin: 0 auto; overflow: hidden; }
+    canvas { display: block; width: 540px; height: 960px; }
+    .camada { position: absolute; inset: 0; pointer-events: none; }
+    #escuro { opacity: 0; background: linear-gradient(#0b1020, #1a2332 55%, #0d1418); mix-blend-mode: multiply; }
+    #ouro { opacity: 0; background: radial-gradient(circle at 50% 45%, rgba(255,215,106,.5), transparent 60%); mix-blend-mode: screen; }
+    #flash { opacity: 0; background: #eef4ff; }
+    #vinheta { background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.5) 100%); }
+
+    #topo { position: absolute; top: 54px; left: 0; right: 0; text-align: center; }
+    .pilula { display: inline-block; padding: 6px 16px; border-radius: 999px; font-weight: 800; }
+    #dia { background: rgba(0,0,0,.55); font-size: 20px; letter-spacing: .04em; border: 2px solid rgba(255,255,255,.25); }
+    #alerta { margin-top: 8px; background: rgba(170, 20, 20, .88); font-size: 17px; opacity: 0; }
+    #contador { margin-top: 8px; background: rgba(46,125,50,.92); font-size: 22px; opacity: 0; }
+    #progresso { width: 220px; margin: 8px auto 0; opacity: 0; }
+    #progresso .barra { height: 10px; border-radius: 999px; background: rgba(0,0,0,.45); border: 2px solid rgba(255,255,255,.7); overflow: hidden; }
+    #progresso .barra div { height: 100%; width: 0; background: linear-gradient(90deg, #c8873e, #f2c27a); }
+    #progresso .rotulo { font-size: 14px; font-weight: 800; margin-top: 3px; text-shadow: 0 2px 6px rgba(0,0,0,.8); }
+
+    /* Legenda: pequena e baixa, fora das áreas cobertas pelo app */
+    #legenda { position: absolute; left: 36px; right: 64px; top: 668px; text-align: center;
+      font-weight: 900; font-size: 30px; line-height: 1.14; text-transform: uppercase;
+      paint-order: stroke fill; -webkit-text-stroke: 7px #000; transform-origin: 50% 50%; }
+    #legenda .p { display: inline-block; margin: 0 .12em; }
+    #legenda .em { color: var(--amarelo); }
+
+    /* Prints dos pedidos nos comentários */
+    #comentarios { position: absolute; left: 50%; top: 178px; width: 492px; transform: translateX(-50%); }
+    .comentario { position: relative; margin-bottom: 10px; padding: 11px 13px 10px; border-radius: 18px; background: #1b1e23;
+      border: 2px solid rgba(255,255,255,.18); box-shadow: 0 14px 36px rgba(0,0,0,.55); opacity: 0; transform-origin: 50% 0; }
+    .comentario .cabeca { font-size: 13px; font-weight: 800; letter-spacing: .04em; color: #ffd23f; margin-bottom: 6px; }
+    .comentario img { display: block; width: 100%; border-radius: 6px; }
+    .comentario .bicho { position: absolute; right: -12px; top: -18px; font-size: 40px; transform: rotate(10deg); }
+
+    /* Carimbos do upgrade da arca */
+    #carimbos { position: absolute; left: 0; right: 0; top: 250px; text-align: center; }
+    .carimbo { display: block; width: max-content; margin: 0 auto 12px; padding: 8px 18px; border: 5px solid #2e7d32; border-radius: 12px;
+      color: #2e7d32; background: rgba(255,255,255,.93); font-weight: 900; font-size: 26px; letter-spacing: .03em;
+      transform: scale(0) rotate(-8deg); opacity: 0; }
+
+    #cartao { position: absolute; left: 50%; top: 250px; width: 400px; transform: translateX(-50%) scale(0);
+      background: #fff; color: #111; border-radius: 24px; padding: 20px 20px 22px; text-align: center; box-shadow: 0 18px 50px rgba(0,0,0,.55); }
+    #cartao .avatar { width: 150px; height: 150px; border-radius: 50%; margin: -86px auto 10px; padding: 5px;
+      background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+    #cartao .avatar img { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #fff; display: block; object-fit: cover; }
+    #cartao .nome { font-weight: 900; font-size: 26px; }
+    #cartao .bio { font-size: 16px; color: #555; margin-top: 4px; }
+    #cartao .botao { margin-top: 14px; background: #0095f6; color: #fff; font-weight: 900; font-size: 24px; border-radius: 14px; padding: 11px 0; }
+    #cursor { position: absolute; font-size: 50px; left: 315px; top: 445px; opacity: 0; }
+    #recado { position: absolute; left: 40px; right: 64px; top: 560px; text-align: center; opacity: 0;
+      padding: 10px 14px; border-radius: 16px; background: rgba(0,0,0,.62); font-weight: 800; font-size: 20px; line-height: 1.25; }
+  </style>
+</head>
+<body>
+  <div id="palco">
+    <canvas id="cena"></canvas>
+    <div id="escuro" class="camada"></div>
+    <div id="ouro" class="camada"></div>
+    <div id="vinheta" class="camada"></div>
+    <div id="flash" class="camada"></div>
+    <div id="topo">
+      <div><span id="dia" class="pilula">DIA 3</span></div>
+      <div><span id="alerta" class="pilula">⚠️ A CHUVA ESTÁ CHEGANDO</span></div>
+      <div><span id="contador" class="pilula">+0 AJUDANTES</span></div>
+      <div id="progresso"><div class="barra"><div id="barra"></div></div><div class="rotulo" id="progresso-rotulo">ARCA 2%</div></div>
+    </div>
+    <div id="comentarios"></div>
+    <div id="carimbos">
+      <span class="carimbo">QUILHA ✅</span>
+      <span class="carimbo">FUNDO ✅</span>
+      <span class="carimbo">1ª COSTELA ✅</span>
+    </div>
+    <div id="recado">Comenta o animal que você vai levar 👇</div>
+    <div id="legenda"></div>
+    <div id="cartao">
+      <div class="avatar"><img src="assets/perfil.jpg" alt="Noé"></div>
+      <div class="nome">@arca_do_noee</div>
+      <div class="bio">Siga e ganhe sua vaga na arca 🎟️</div>
+      <div class="botao">Seguir</div>
+    </div>
+    <div id="cursor">👆</div>
+  </div>
+  <script type="module" src="js/video03.js"></script>
+</body>
+</html>
