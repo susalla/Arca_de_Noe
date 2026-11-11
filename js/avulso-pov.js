@@ -211,7 +211,7 @@ function atualizarProcissao(t) {
     c.a.position.set(c.x, Math.abs(passo) * 0.05, c.z - andou);
     c.a.userData.pernas.forEach((perna, i) => { perna.rotation.z = (i % 2 ? 1 : -1) * passo * 0.3; });
   }
-  for (const { r, c, altura } of rotulosAnimais) r.position.copy(c.a.position).add(V(0.7, altura, 0));
+  for (const { r, c, altura } of rotulosAnimais) r.position.copy(c.a.position).add(V(-2.2, altura, 0)); // puxado para dentro da tela
   for (const av of aves) {
     av.a.position.set(av.x, av.y + Math.sin(t * 2 + av.fase) * 0.4, av.z - andou * 1.6);
     av.a.rotation.y = Math.PI / 2;
