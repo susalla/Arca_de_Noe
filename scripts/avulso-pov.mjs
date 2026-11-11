@@ -143,7 +143,7 @@ rodar('ffmpeg', ['-y', '-loglevel', 'error', '-i', IMAGEM, '-i', TRILHA,
 // Capa: o vizinho de braços cruzados do lado do Noé, com a pergunta
 const CAPA = resolve(VIDEOS, 'avulso-pov-capa.jpg');
 const ttf = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
-rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '5.9', '-i', IMAGEM, '-frames:v', '1',
+rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '5.2', '-i', IMAGEM, '-frames:v', '1',
   '-vf', `drawbox=y=ih*0.62:w=iw:h=ih*0.2:color=black@0.6:t=fill,` +
     `drawtext=fontfile=${ttf}:text='NOÉ…':fontcolor=white:fontsize=86:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.632,` +
     `drawtext=fontfile=${ttf}:text='CADÊ O MAR?':fontcolor=0xffd23f:fontsize=112:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.708`,
