@@ -1,6 +1,6 @@
 # Vídeo 04: "Era pra ser 200… chegaram 378!"
 
-**Perfil:** @arca_do_noee · **Formato:** vertical 9:16, 51 s · **Arquivo:** `videos/video-04.mp4` (Instagram e TikTok) · **Capa:** `videos/video-04-capa.jpg`
+**Perfil:** @arca_do_noee · **Formato:** vertical 9:16, 55 s · **Arquivo:** `videos/video-04.mp4` (Instagram e TikTok) · **Capa:** `videos/video-04-capa.jpg`
 **Dia da obra:** DIA 4 · **Ajudantes:** 75 → 378 (+303) · **Arca:** costelas 2 a 7 (7% → 18%) · **Próxima peça:** 8ª costela com 400 (faltam 22)
 
 Os comentários aparecem como **cartão de texto** (o @ e o comentário de quem escreveu), no lugar do print.
@@ -19,20 +19,22 @@ A promessa é cumprida e a surpresa vira o gancho. **Duração:** ~50 s · **Dia
 | 11–16 | **Chuva de ajudantes:** 303 feixes dourados caindo em volta da obra. Os @ dos 100 seguidores mais novos sobem rápido como créditos de filme (lista abaixo) | **Noé:** "Bem-vindos, *ajudantes!* Procura teu nome aí!" |
 | 16–20 | Cartão do **@garciaxxzn**: "Eu ajudante de caminhão com material". Entra uma **carroça de madeira lotada de toras**, puxada pelo cavalo do **@kaike_salless** | **Noé:** "Caminhão eu não sei o que é… mas *material* chegou!" |
 | 20–24 | Cartão do **@rodri.cuts**: "Poxa mano noé, nem me escolheu😔". O Noé encara a câmera, sorri | **Noé:** "@rodri.cuts… *dessa vez* eu te escolhi." |
-| 24–28 | Cartões do **@oi_boanoite143667** e do **@_pandilhawzs7**: "Eu quero ser o cupim". O Noé crava uma placa: **"PROIBIDO CUPIM 🚫🐜"** | **Noé:** "Cupim? Numa obra de *madeira?* Nem pensar." |
-| 28–31 | Cartão: "@arca_do_noee então me deixa ser um elefante". Chega o **2º elefante** (o casal fica completo) | **Noé:** "Agora sim! O elefante tem *par.*" |
-| 31–34 | Cartão do **@davi.lucas.0077** ("Eiu😂" + "Eu" ×27). Uma pilha de balões "EU" cai em cima do Noé | **Noé:** "Já entendi, Davi! Você é ajudante *vinte e sete vezes!*" |
-| 34–42 | **Upgrade:** a carroça despeja as toras, as **costelas 2 a 7** sobem uma atrás da outra com ondas e faíscas. Carimbos rápidos: **2ª ✅ 3ª ✅ 4ª ✅ 5ª ✅ 6ª ✅ 7ª ✅**. Barra: **ARCA 7% → 18%** | **Noé:** "Segunda, terceira, quarta… *sétima costela!* Isso é obra de trezentos!" |
-| 42–46 | Plano aberto: a arca já com cara de barco (7 costelas), a multidão em volta, os animais pedidos na fila | **Noé:** "Olha o tamanho que isso tá ficando…" |
-| 46–50 | "PRÓXIMA PEÇA: 8ª COSTELA · FALTAM 22 👀" + cartão de seguir + "Comenta o animal que você vai levar 👇". Ao fundo, um **cupim** espiando atrás de uma tora (gancho) | **Noé:** "Faltam só *vinte e dois…* e alguém viu um cupim por aí?" |
+| 24–26,8 | Cartões do **@oi_boanoite143667** e do **@_pandilhawzs7**: "Eu quero ser o cupim". A placa **"PROIBIDO CUPIM 🚫"** cai e o Noé crava com o martelo | **Noé:** "Cupim? Numa obra de *madeira?*" |
+| 26,8–30,3 | **Terror:** trovão, o céu escurece, luz vermelha por baixo do rosto do Noé, os olhos brilham em vermelho e a câmera mergulha no rosto dele. Coração batendo e acorde de susto no fim | **Noé (grave, devagar):** "Quem pedir cupim… *vai se ver comigo.*" |
+| 30,3–35 | **Os diferentões caem do céu**, um a um, com feixe dourado e o cartão de quem pediu: **ornitorrinco** (@negao_paciencia), **flamingo** (@barbara.ilopes, com o par do @pxt_luan7) e **hipopótamo** (@kendrewff). A câmera acompanha cada queda e abre para os três | **Noé:** "Ornitorrinco… *flamingo…* hipopótamo?! Que arca *diferente!*" |
+| 35–38,6 | Cartão do **@davi.lucas.0077** ("Eiu😂" + "Eu" ×27). Uma pilha de balões "EU" cai em cima do Noé | **Noé:** "Já entendi, Davi! Você é ajudante *vinte e sete vezes!*" |
+| 38,6–45,9 | **Upgrade:** a carroça despeja as toras, as **costelas 2 a 7** sobem uma atrás da outra com ondas e faíscas. Carimbos rápidos: **2ª ✅ 3ª ✅ 4ª ✅ 5ª ✅ 6ª ✅ 7ª ✅**. Barra: **ARCA 7% → 18%** | **Noé:** "Segunda, terceira, quarta… *sétima costela!* Isso é obra de trezentos!" |
+| 45,9–49,9 | Plano aberto: a arca já com cara de barco (7 costelas), a multidão em volta e os diferentões com o @ de quem pediu | **Noé:** "Olha o tamanho que isso tá ficando…" |
+| 49,9–55 | "PRÓXIMA PEÇA: 8ª COSTELA · FALTAM 22 👀" + cartão de seguir + "Comenta o animal que você vai levar 👇". Ao fundo, um **cupim** espiando atrás de uma tora (gancho) | **Noé:** "Faltam só *vinte e dois…* e alguém viu um cupim por aí?" |
 
 ### Animais que chegam (com o @ de quem pediu)
 
-Já existem no jogo (é só usar):
+No vídeo entram só os diferentões (ornitorrinco, flamingo e hipopótamo). Os outros ficam para os próximos vídeos.
+
+Já existiam no jogo:
 
 | Animal | Quem pediu |
 | --- | --- |
-| 🐘 Elefante (completa o casal) | @_pandilhawzs7, @kaiorlx7 |
 | 🐎 Cavalo (puxa a carroça) | @kaike_salless, @aparecidolorenzo07 |
 | 🐈 Gato | @_dudu.ofcx |
 | 🦅 Águia | @amigo_legal_silvax, @cr.bfr |
@@ -42,7 +44,7 @@ Já existem no jogo (é só usar):
 | 🐕 Cachorro | @emanuely_da_fiel08 |
 | 🦁 Leão | @rebeca_camargo346 |
 
-Precisam ser modelados (bons para os próximos vídeos):
+Modelados agora e guardados para os próximos vídeos (o golira e o camaleão vão no "Noé responde #1"):
 
 | Animal | Quem pediu | Observação |
 | --- | --- | --- |
@@ -65,7 +67,8 @@ Precisam ser modelados (bons para os próximos vídeos):
 >
 > @rodri.cuts dessa vez eu te escolhi 😉
 > @garciaxxzn o "caminhão" chegou 🐎🪵
-> @oi_boanoite143667 @_pandilhawzs7 cupim continua PROIBIDO 🚫🐜
+> @oi_boanoite143667 @_pandilhawzs7 quem pedir cupim vai se ver com o Noé 😠🚫🐜
+> 🦫 @negao_paciencia 🦩 @barbara.ilopes 🦩 @pxt_luan7 🦛 @kendrewff que arca diferente! 😂
 > @davi.lucas.0077 já entendi, você é ajudante 27 vezes 😂
 >
 > Faltam só 22 pra 8ª costela! 👀
