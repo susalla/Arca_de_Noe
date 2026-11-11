@@ -47,6 +47,7 @@ export class Noe {
       olho.position.set(lado * 0.09, 1.68, 0.24);
       olhos.add(olho);
     }
+    this.olhos = olhos;
 
     // Braço esquerdo segura o cajado, o direito martela.
     const bracoEsq = new THREE.Group();
@@ -377,6 +378,18 @@ export const TIPOS_DE_ANIMAIS = {
   urubu:    { emoji: '🐦‍⬛', passaro: true, tamanho: 1.15, cor: '#1c1c1f', corCabeca: '#4a4a50', bico: '#9a9a9a', asa: '#141416', careca: true },
   picapau:  { emoji: '🐦', passaro: true, tamanho: 0.75, cor: '#1f1f22', corCabeca: '#c0392b', peito: '#f2f2f2', bico: '#d9a531', asa: '#2a2a2e', crista: '#d62d20', bicoLongo: true, listras: '#f2f2f2' },
   onca:     { emoji: '🐆', corpo: [1.45, 0.6, 0.55], perna: 0.55, pescoco: 0.18, cabeca: 0.42, cor: '#e3a63d', manchas: '#3a2410', manchasQtd: 16, orelhinhas: true, raboLongo: 1.0 },
+  // Os "diferentões" pedidos nos comentários
+  hipopotamo:   { emoji: '🦛', corpo: [1.9, 1.0, 1.1], perna: 0.42, pescoco: 0.05, cabeca: 0.68, cor: '#8a7b8f', focinho: 0.42, orelhinhas: true, dentoes: true },
+  ornitorrinco: { emoji: '🦫', corpo: [0.75, 0.3, 0.45], perna: 0.1, pescoco: 0.02, cabeca: 0.26, cor: '#7a4b2a', bicoPato: '#3a3a3e', raboRemo: true },
+  camaleao:     { emoji: '🦎', corpo: [0.6, 0.32, 0.26], perna: 0.2, pescoco: 0.04, cabeca: 0.26, cor: '#5fbf4a', olhosGrandes: true, raboEnrolado: true, escamas: '#3f9a33' },
+  lagarto:      { emoji: '🦎', corpo: [0.8, 0.2, 0.3], perna: 0.1, pescoco: 0.02, cabeca: 0.2, cor: '#7fae3c', focinho: 0.22, raboLongo: 0.8, escamas: '#5f8c2a' },
+  tigre:        { emoji: '🐅', corpo: [1.5, 0.64, 0.56], perna: 0.58, pescoco: 0.18, cabeca: 0.44, cor: '#e8822b', listras: '#1b1b1b', orelhinhas: true, raboLongo: 1.0 },
+  puma:         { emoji: '🐆', corpo: [1.4, 0.58, 0.5], perna: 0.55, pescoco: 0.18, cabeca: 0.4, cor: '#c49a62', orelhinhas: true, raboLongo: 1.0 },
+  gorila:       { emoji: '🦍', primata: true, tamanho: 1.35, cor: '#2b2b2e', rosto: '#4a4448', costas: '#9a9aa0' },
+  macaco:       { emoji: '🐒', primata: true, tamanho: 0.7, cor: '#8a5a2b', rosto: '#e2b98c', rabo: true },
+  flamingo:     { emoji: '🦩', passaro: true, tamanho: 1.0, cor: '#f48fb1', corCabeca: '#f48fb1', bico: '#2b2b2b', asa: '#ec6f9c', pernaLonga: '#f06292', pescocoLongo: true },
+  bicodesapato: { emoji: '🐦', passaro: true, tamanho: 1.2, cor: '#8c97a3', corCabeca: '#9aa4ae', bico: '#c8b27a', asa: '#6f7a86', bicoSapato: true, pernaLonga: '#3a3a3a' },
+  queroquero:   { emoji: '🐦', passaro: true, tamanho: 0.8, cor: '#b8b4a8', corCabeca: '#cfccc2', peito: '#1e1e1e', bico: '#d84b3a', asa: '#8a8678', pernaLonga: '#d84b3a' },
 };
 
 // Pássaro low-poly, de frente para +x (como os outros animais), com asas que batem.
@@ -395,11 +408,24 @@ export function criarPassaro(p) {
   }
   const cabeca = new THREE.Group();
   cabeca.position.set(0.36, 0.86, 0);
+  const altura = p.pernaLonga ? 0.75 : 0; // flamingo, bico-de-sapato e quero-quero ficam no alto
+  if (p.pescocoLongo) {
+    const pescoco = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.05, 5, 10, Math.PI * 1.1), mat(p.cor));
+    pescoco.rotation.z = -0.3;
+    pescoco.position.set(0.3, 0.95, 0);
+    g.add(pescoco);
+    cabeca.position.set(0.5, 1.3, 0);
+  }
   const cranio = new THREE.Mesh(new THREE.SphereGeometry(p.careca ? 0.13 : 0.16, 7, 5), mat(p.corCabeca || p.cor));
   cabeca.add(cranio);
-  const bico = new THREE.Mesh(new THREE.ConeGeometry(0.055, p.bicoLongo ? 0.36 : 0.2, 5), mat(p.bico));
-  bico.rotation.z = -Math.PI / 2 + (p.bicoLongo ? 0 : 0.35);
-  bico.position.set(p.bicoLongo ? 0.3 : 0.2, p.bicoLongo ? 0 : -0.03, 0);
+  const bico = p.bicoSapato
+    ? new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.2, 0.22), mat(p.bico)) // bico enorme, de "sapato"
+    : new THREE.Mesh(new THREE.ConeGeometry(0.055, p.bicoLongo ? 0.36 : 0.2, 5), mat(p.bico));
+  if (p.bicoSapato) bico.position.set(0.24, -0.06, 0);
+  else {
+    bico.rotation.z = -Math.PI / 2 + (p.bicoLongo ? 0 : 0.35) - (p.pescocoLongo ? 0.8 : 0);
+    bico.position.set(p.bicoLongo ? 0.3 : 0.2, p.bicoLongo ? 0 : -0.03, 0);
+  }
   cabeca.add(bico);
   for (const lado of [-1, 1]) {
     const olho = new THREE.Mesh(new THREE.SphereGeometry(0.03, 5, 4), mat(p.careca ? '#c0392b' : '#111'));
@@ -439,11 +465,16 @@ export function criarPassaro(p) {
   cauda.rotation.z = 0.25;
   g.add(cauda);
   const pernas = [-1, 1].map((lado) => {
-    const perna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.3, 4), mat('#c9a227'));
-    perna.position.set(0.02, 0.17, lado * 0.1);
+    const comp = 0.3 + altura;
+    const perna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, comp, 4), mat(p.pernaLonga || '#c9a227'));
+    perna.position.set(0.02, comp / 2 + 0.02 - altura, lado * 0.1);
     g.add(perna);
     return perna;
   });
+  if (altura) { // levanta tudo menos as pernas
+    g.children.forEach((c) => { if (!pernas.includes(c)) c.position.y += altura; });
+    pernas.forEach((pp) => { pp.position.y += altura; });
+  }
   g.scale.setScalar(e);
   g.userData.asas = asas;
   g.userData.cabeca = cabeca;
@@ -460,8 +491,63 @@ export function baterAsas(passaro, abertura, fase) {
   }
 }
 
+// Gorila e macaco: em pé, apoiados nos braços compridos (os "nós dos dedos" no chão)
+function criarPrimata(p) {
+  const g = new THREE.Group();
+  const pelo = mat(p.cor);
+  const rosto = mat(p.rosto);
+  const tronco = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.78, 0.7), pelo);
+  tronco.position.set(0, 0.95, 0);
+  tronco.rotation.z = -0.35; // inclinado para a frente (+x)
+  g.add(tronco);
+  if (p.costas) {
+    const prata = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 0.72), mat(p.costas));
+    prata.position.set(-0.18, 1.05, 0);
+    prata.rotation.z = -0.35;
+    g.add(prata);
+  }
+  const cabeca = new THREE.Group();
+  cabeca.position.set(0.32, 1.42, 0);
+  const cranio = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.36, 0.38), pelo);
+  const cara = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.24, 0.28), rosto);
+  cara.position.set(0.19, -0.04, 0);
+  const testa = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.07, 0.36), pelo);
+  testa.position.set(0.2, 0.1, 0);
+  cabeca.add(cranio, cara, testa);
+  for (const sz of [-1, 1]) {
+    const olho = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.04, 0.05), mat('#111'));
+    olho.position.set(0.225, 0.03, sz * 0.07);
+    cabeca.add(olho);
+    if (p.rabo) { // macaco: orelhas de abano
+      const orelha = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.14, 0.1), rosto);
+      orelha.position.set(0, 0, sz * 0.22);
+      cabeca.add(orelha);
+    }
+  }
+  g.add(cabeca);
+  const membro = (comp, grossura, x, y, z) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(grossura, comp, grossura).translate(0, -comp / 2, 0), pelo);
+    m.position.set(x, y, z);
+    g.add(m);
+    return m;
+  };
+  const bracos = [-1, 1].map((sz) => membro(1.18, 0.2, 0.3, 1.18, sz * 0.42));
+  const pernas = [-1, 1].map((sz) => membro(0.6, 0.22, -0.2, 0.6, sz * 0.2));
+  bracos.forEach((b) => { b.rotation.z = 0.12; });
+  if (p.rabo) {
+    const rabo = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.04, 5, 10, Math.PI * 1.4), pelo);
+    rabo.position.set(-0.45, 0.85, 0);
+    g.add(rabo);
+  }
+  g.scale.setScalar(p.tamanho || 1);
+  g.userData.pernas = [...bracos, ...pernas];
+  g.userData.cabeca = cabeca;
+  return sombra(g);
+}
+
 export function criarAnimal(tipo, semente) {
   const p = TIPOS_DE_ANIMAIS[tipo];
+  if (p.primata) return criarPrimata(p);
   if (p.passaro) {
     const passaro = criarPassaro(p);
     baterAsas(passaro, 0, 0);
@@ -566,6 +652,45 @@ export function criarAnimal(tipo, semente) {
       g.add(escama);
     }
   }
+  if (p.listras) { // tigre: listras verticais dos dois lados
+    for (let i = 0; i < 7; i++) for (const sz of [-1, 1]) {
+      const l = new THREE.Mesh(new THREE.BoxGeometry(0.07, ca * 0.75, 0.02), mat(p.listras));
+      l.position.set(-cl * 0.4 + i * cl * 0.13, p.perna + ca * 0.55, sz * (cp / 2 + 0.01));
+      l.rotation.x = sz * 0.0;
+      g.add(l);
+    }
+  }
+  if (p.dentoes) { // hipopótamo: dois dentões para fora
+    for (const sz of [-1, 1]) {
+      const d = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 0.08), mat('#f4f1e6'));
+      d.position.set(cabeca.position.x + p.cabeca * 0.6 + (p.focinho || 0) - 0.05, cabeca.position.y - p.cabeca * 0.02, sz * p.cabeca * 0.25);
+      g.add(d);
+    }
+  }
+  if (p.bicoPato) { // ornitorrinco: bico de pato achatado
+    const bico = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.07, 0.3), mat(p.bicoPato));
+    bico.position.set(cabeca.position.x + p.cabeca * 0.6 + 0.16, cabeca.position.y - p.cabeca * 0.15, 0);
+    g.add(bico);
+  }
+  if (p.raboRemo) { // ornitorrinco: rabo de castor (um remo)
+    const remo = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.06, 0.32), mat('#5a3519'));
+    remo.position.set(-frente - 0.2, p.perna + 0.06, 0);
+    g.add(remo);
+  }
+  if (p.olhosGrandes) { // camaleão: olhos de bolinha que giram
+    for (const sz of [-1, 1]) {
+      const o = new THREE.Mesh(new THREE.SphereGeometry(0.085, 8, 6), cabecaMat);
+      o.position.set(cabeca.position.x + 0.03, cabeca.position.y + 0.04, sz * p.cabeca * 0.5);
+      const pupila = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 4), mat('#111'));
+      pupila.position.set(cabeca.position.x + 0.09, cabeca.position.y + 0.05, sz * (p.cabeca * 0.5 + 0.05));
+      g.add(o, pupila);
+    }
+  }
+  if (p.raboEnrolado) { // camaleão: rabo em espiral
+    const rabo = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.035, 5, 12, Math.PI * 1.7), corpoMat);
+    rabo.position.set(-frente - 0.1, p.perna + 0.12, 0);
+    g.add(rabo);
+  }
   if (p.orelhinhas) {
     for (const sz of [-1, 1]) {
       const orelha = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.12, 4), cabecaMat);
@@ -574,7 +699,9 @@ export function criarAnimal(tipo, semente) {
     }
   }
 
-  if (p.raboLongo) {
+  if (p.raboEnrolado || p.raboRemo) {
+    // já tem rabo próprio
+  } else if (p.raboLongo) {
     // rabo longo e afinando para trás
     const rabo = new THREE.Mesh(new THREE.ConeGeometry(p.escamas ? cp * 0.33 : 0.09, p.raboLongo, 5), corpoMat);
     rabo.rotation.z = Math.PI / 2; // ponta para -x

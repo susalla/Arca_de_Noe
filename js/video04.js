@@ -212,38 +212,29 @@ const placa = new THREE.Group();
 }
 const poeiraPlaca = new Explosao(cena, { n: 70, cor: '#e8c58a', tamanho: 0.12, velocidade: 2.5, subida: 1.6, dur: 0.8, semente: 61 });
 
-// ------------------------------------------------------------ Elefantes: o do @juli.ano15c ganha par (@_pandilhawzs7)
-const E1 = V(4.6, 0, 8.9), E2 = V(6.9, 0, 8.3);
-const elefante1 = criarAnimal('elefante', 1);
-elefante1.position.copy(E1);
-elefante1.rotation.y = YAW_CAMERA + 0.55;
-const elefante2 = criarAnimal('elefante', 2);
-elefante2.position.copy(E2);
-elefante2.rotation.y = YAW_CAMERA - 0.5;
-cena.add(elefante1, elefante2);
-const rotuloE1 = etiqueta3D('@juli.ano15c 🐘', { fundo: '#ffd23f', altura: 0.34, fonte: 44 });
-const rotuloE2 = etiqueta3D('@_pandilhawzs7 🐘', { fundo: '#ffd23f', altura: 0.34, fonte: 44 });
-cena.add(rotuloE1, rotuloE2);
-const feixeE2 = new Feixe(cena);
-const ondaE2 = new Onda(cena);
-const poeiraE2 = new Explosao(cena, { n: 110, cor: '#e8c58a', tamanho: 0.18, velocidade: 5, subida: 3, dur: 1.2, semente: 71 });
-const coracoes = Array.from({ length: 5 }, (_, k) => {
-  const s = etiqueta3D('❤️', { fundo: 'rgba(0,0,0,0)', altura: 0.7, fonte: 60 });
-  cena.add(s);
-  return { s, dx: (k - 2) * 0.55, atraso: k * 0.15 };
-});
+// ------------------------------------------------------------ Terror: "Quem pedir cupim vai se ver comigo"
+const luzTerror = new THREE.PointLight('#ff2a14', 0, 6, 1.6); // lanterna vermelha por baixo do rosto
+luzTerror.position.copy(N).add(V(0.1, 0.9, 1.1));
+cena.add(luzTerror);
 
-// ------------------------------------------------------------ Animais novos (panorama)
+// ------------------------------------------------------------ Os diferentões: ornitorrinco, flamingo e hipopótamo caem do céu
+const POS_DIFERENTOES = [V(-6.4, 0, 15.9), V(-4.9, 0, 16.6), V(-3.1, 0, 15.6), V(-5.6, 0, 17.6)]; // longe da câmera das cenas do Noé
 const animaisNovos = ANIMAIS_NOVOS.map((a, k) => {
   const obj = criarAnimal(a.tipo, 50 + k);
-  const passaro = TIPOS_DE_ANIMAIS[a.tipo].passaro;
-  obj.position.set(-3.2 + k * 1.3, passaro ? 2.6 + (k % 2) * 0.7 : 0, 16.2 + (k % 2) * 0.9);
-  obj.rotation.y = YAW_CAMERA - 0.4;
-  if (passaro) obj.scale.setScalar(1.3);
+  const base = POS_DIFERENTOES[k];
+  obj.position.copy(base);
+  obj.rotation.y = YAW_CAMERA - 0.35;
+  if (a.tipo === 'flamingo') obj.scale.setScalar(1.3);
   cena.add(obj);
   const rot = etiqueta3D(`${a.arroba} ${TIPOS_DE_ANIMAIS[a.tipo].emoji}`, { fundo: '#ffd23f', altura: 0.34, fonte: 44 });
   cena.add(rot);
-  return { obj, rot, passaro, k, altura: { elefante: 3.4, cavalo: 2.3, leao: 2.0, jacare: 1.0, gato: 1.1, galinha: 1.1, cachorro: 1.4 }[a.tipo] ?? 1.2 };
+  const queda = MARCOS.quedas[k]; // os três primeiros caem na cena deles; o 2º flamingo já chega junto
+  return {
+    obj, rot, k, base, queda: queda ?? MARCOS.quedas[1] + 0.25,
+    altura: { hipopotamo: 2.1, ornitorrinco: 0.9, flamingo: 2.15 }[a.tipo] ?? 1.4,
+    feixe: new Feixe(cena), onda: new Onda(cena),
+    poeira: new Explosao(cena, { n: 80, cor: '#e8c58a', tamanho: 0.15, velocidade: 4, subida: 2.5, dur: 1.0, semente: 80 + k }),
+  };
 });
 
 // ------------------------------------------------------------ Cupim espiando atrás da tora (gancho)
@@ -306,11 +297,31 @@ function cameraEm(c, t) {
     case 'multidao': return [L(V(10, 18, 46), V(6, 14, 40)), V(0, 1, 4)];
     case 'carroca': return [L(V(5.4, 5.0, 27.5), V(5.2, 4.6, 26.0)), V(5.6, 1.3, 14.2)];
     case 'rodri': return [L(N.clone().add(V(1.0, 2.0, 6.4)), N.clone().add(V(1.1, 1.95, 5.6))), N.clone().add(V(1.05, 1.5, -0.3))];
-    case 'cupim': return [L(N.clone().add(V(-0.7, 1.9, 6.0)), N.clone().add(V(-0.8, 1.8, 5.3))), N.clone().add(V(-0.95, 1.45, 0.5))];
-    case 'elefante': return [L(V(5.8, 3.4, 23), V(5.9, 3.2, 21.5)), V(5.8, 1.9, 8.5)];
+    case 'cupim': {
+      // terror: a câmera mergulha no rosto do Noé
+      const [z0] = MARCOS.terror;
+      if (t > z0) {
+        const kz = ss(t, z0, z0 + 2.4);
+        return [N.clone().add(V(-0.8, 1.8, 5.3)).lerp(N.clone().add(V(0.05, 1.8, 2.7)), kz), CABECA.clone().lerp(CABECA.clone().add(V(0, -0.15, 0)), kz)];
+      }
+      return [L(N.clone().add(V(-0.7, 1.9, 6.0)), N.clone().add(V(-0.8, 1.8, 5.3))), N.clone().add(V(-0.95, 1.45, 0.5))];
+    }
+    case 'diferentoes': {
+      // acompanha cada queda (ornitorrinco → flamingo → hipopótamo) e no fim abre para os três
+      const q = MARCOS.quedas;
+      const alvos = [V(-6.4, 0.9, 15.9), V(-4.9, 1.5, 16.6), V(-3.1, 1.4, 15.6)];
+      let a = alvos[0].clone();
+      if (t > q[0] + 0.35) a.lerp(alvos[1], ss(t, q[0] + 0.35, q[1] - 0.25));
+      if (t > q[1] + 0.35) a = alvos[1].clone().lerp(alvos[2], ss(t, q[1] + 0.35, q[2] - 0.25));
+      const abre = ss(t, q[2] + 0.6, q[2] + 1.6);
+      const dist = t < q[0] + 0.35 ? 3.4 : t < q[1] + 0.35 ? lerp(3.4, 5.8, ss(t, q[0] + 0.35, q[1] - 0.25)) : 6.2;
+      const perto = a.clone().add(V(0.4, 0.9 + dist * 0.12, dist));
+      const longe = V(-4.2, 2.4, 24.5);
+      return [perto.lerp(longe, abre), a.clone().lerp(V(-5.0, 1.0, 16.2), abre)];
+    }
     case 'davi': return [L(N.clone().add(V(0.3, 2.2, 4.6)), N.clone().add(V(0.2, 2.15, 4.0))), CABECA.clone().add(V(0, -0.35, 0))];
     case 'upgrade': return [L(V(16, 8, 26), V(10, 10, 29)), V(0, 2, 0)];
-    case 'panorama': return [L(V(-14, 12, 38), V(-4, 9, 40)), V(3.5, 1.5, 10)];
+    case 'panorama': return [L(V(-15, 12, 38), V(-6, 9, 40)), V(-0.5, 1.5, 10)];
     case 'final': return [L(N.clone().add(V(1.3, 1.95, 5.8)), N.clone().add(V(1.1, 1.9, 5.1))), N.clone().add(V(0.7, 1.2, 0.6))];
   }
   return [V(0, 3, 20), V(0, 1, 0)];
@@ -360,10 +371,16 @@ function poseDoNoe(c, t) {
       else if (ultimo !== undefined && t - ultimo < 0.25) a = lerp(-0.5, -1.9, (t - ultimo) / 0.25);
       else if (proximo !== undefined && t > MARCOS.placa) a = -1.9;
       n.bracoDir.rotation.set(a, 0, 0);
-      if (t > 26.9) { yaw = 0; n.bracoDir.rotation.set(0, 0, 0.9); n.bracoEsq.rotation.set(0, 0, -0.9); n.martelo.visible = false; }
+      if (t > MARCOS.terror[0]) { // ameaçador: inclinado para a câmera, martelo na mão
+        const k = ss(t, MARCOS.terror[0], MARCOS.terror[0] + 0.6);
+        yaw = lerp(-0.45, 0, k);
+        n.corpo.rotation.x = 0.14 * k;
+        n.bracoDir.rotation.set(lerp(-0.6, -1.1, k) + Math.sin(t * 6) * 0.08 * k, 0, 0.2);
+        n.bracoEsq.rotation.set(-1.0 * k, 0, 0.4 * k);
+      }
       break;
     }
-    case 'elefante': n.bracoDir.rotation.set(0, 0, 2.3); n.bracoEsq.rotation.set(0, 0, -2.3); break;
+    case 'diferentoes': yaw = 0.25; n.bracoDir.rotation.set(-0.3, 0, 1.6 + Math.sin(t * 3) * 0.2); n.bracoEsq.rotation.set(-0.3, 0, -1.6); n.corpo.rotation.z = Math.sin(t * 2) * 0.08; break; // coçando a cabeça
     case 'davi': {
       // rindo, depois soterrado pelos "EU"
       n.corpo.rotation.x = Math.sin(t * 18) * 0.04 - 0.05;
@@ -506,7 +523,7 @@ function hud(c, t) {
   if (iGrupo >= 0) {
     const g = COMENTARIOS[iGrupo];
     caixa.querySelectorAll('.comentario').forEach((el, j) => {
-      const t0 = g.inicio + j * 0.2;
+      const t0 = g.inicio + j * (g.passo ?? 0.2);
       const e = Math.min(1, Math.max(0, (t - t0) / 0.28));
       const sai = ss(t, g.fim - 0.25, g.fim);
       const escala = (e < 1 ? 1 - Math.pow(1 - e, 3) + Math.sin(e * Math.PI) * 0.12 : 1) * (1 - sai * 0.3);
@@ -560,7 +577,6 @@ function renderizarEm(t) {
   cenario.atualizar(t * 3);
   renderer.toneMappingExposure = 1.0;
   $('escuro').style.opacity = '0';
-  $('flash').style.opacity = '0';
 
   poseDoNoe(c, t);
   poseDoVizinho(c, t);
@@ -612,37 +628,43 @@ function renderizarEm(t) {
   }
   poeiraPlaca.atualizar(t, PLACA.clone().add(V(0, 0.1, 0)), P0);
 
-  // Elefantes
-  const F2 = MARCOS.feixeElefante;
-  elefante2.visible = t > F2 - 0.8;
-  if (elefante2.visible) {
-    const ke = Math.min(1, (t - (F2 - 0.8)) / 0.8);
-    elefante2.position.copy(E2).add(V(0, (1 - ke * ke) * 10, 0));
-    const amassa = t > F2 ? 1 - Math.sin(Math.min(1, (t - F2) / 0.3) * Math.PI) * 0.15 : 1;
-    elefante2.scale.set(1 + (1 - amassa) * 0.4, amassa, 1 + (1 - amassa) * 0.4);
+  // Terror: céu escuro, luz vermelha no rosto e olhos brilhando
+  const [te0, te1] = MARCOS.terror;
+  const kt = c.nome === 'cupim' ? ss(t, te0, te0 + 0.5) : 0;
+  luzTerror.intensity = kt * (14 + Math.sin(t * 23) * 2);
+  noe.olhos.children.forEach((o) => { o.material.emissive.set('#ff1a0a'); o.material.emissiveIntensity = kt * 2.5; });
+  if (kt > 0) {
+    cenario.definirClima(lerp(0.2, 1, kt));
+    cenario.sol.intensity *= 1 - kt * 0.85;
+    cenario.hemisferica.intensity *= 1 - kt * 0.8;
   }
-  feixeE2.atualizar(t, E2.x, E2.z, F2);
-  ondaE2.atualizar(t, E2.x, E2.z, F2, 5);
-  poeiraE2.atualizar(t, E2.clone().add(V(0, 0.2, 0)), F2);
-  for (const h of coracoes) {
-    const d = t - (F2 + 0.4 + h.atraso);
-    h.s.visible = c.nome === 'elefante' && d > 0 && d < 1.8;
-    h.s.position.copy(E1.clone().lerp(E2, 0.5)).add(V(h.dx + Math.sin(d * 4 + h.dx) * 0.15, 2.6 + d * 1.1, 0.5));
-    const e = Math.min(1, d / 0.25) * (1 - ss(d, 1.4, 1.8));
-    h.s.scale.set(h.s.userData.escala[0] * e, h.s.userData.escala[1] * e, 1);
-  }
-  elefante1.rotation.z = c.nome === 'elefante' && t < F2 ? 0.06 : 0; // cabisbaixo antes do par chegar
-  const kEle = c.nome === 'elefante' ? 1 : 0;
-  rotulo(rotuloE1, kEle * ss(t, 28.4, 28.6), E1.clone().add(V(-0.9, 3.3, 0)));
-  rotulo(rotuloE2, kEle * ss(t, F2 + 0.1, F2 + 0.3), E2.clone().add(V(0.9, 3.9, 0)));
+  $('terror').style.opacity = String(kt);
+  const relampago = t > MARCOS.trovaoTerror && t < MARCOS.trovaoTerror + 0.5 ? Math.exp(-(t - MARCOS.trovaoTerror) * 9) : 0;
+  $('flash').style.opacity = String(relampago * 0.8);
+  camera.fov = lerp(50, 42, c.nome === 'cupim' ? ss(t, te0, te0 + 2.4) : 0);
+  camera.updateProjectionMatrix();
 
-  // Animais novos (com @) no panorama
+  // Os diferentões caem do céu (feixe + poeira) e ficam para o panorama
+  const iDif = CENAS.findIndex((x) => x[1] === 'diferentoes');
   for (const a of animaisNovos) {
-    a.obj.visible = c.indice >= CENAS.findIndex((x) => x[1] === 'upgrade');
-    if (a.passaro) { baterAsas(a.obj, 0.4, t * 10 + a.k); a.obj.position.y = 2.6 + (a.k % 2) * 0.7 + Math.sin(t * 2 + a.k) * 0.2; }
-    const ini = 42.3 + a.k * 0.38; // em cascata: no máximo três @ ao mesmo tempo
-    const kr = c.nome === 'panorama' ? ss(t, ini, ini + 0.15) * (1 - ss(t, ini + 1.05, ini + 1.2)) : 0;
-    rotulo(a.rot, kr, a.obj.position.clone().add(V(0, (a.passaro ? 1.2 : a.altura) + (a.k % 2) * 0.5, 0)));
+    a.obj.visible = c.indice > iDif || (c.indice === iDif && t > a.queda - 0.7);
+    if (c.indice === iDif && t < a.queda) {
+      const kq = Math.max(0, Math.min(1, (t - (a.queda - 0.7)) / 0.7));
+      a.obj.position.copy(a.base).add(V(0, (1 - kq * kq) * 9, 0));
+      a.obj.scale.setScalar(a.obj.userData.escalaBase ?? (a.obj.userData.escalaBase = a.obj.scale.x));
+    } else {
+      a.obj.position.copy(a.base);
+      const eb = a.obj.userData.escalaBase ?? (a.obj.userData.escalaBase = a.obj.scale.x);
+      const amassa = t > a.queda && t < a.queda + 0.3 ? 1 - Math.sin(((t - a.queda) / 0.3) * Math.PI) * 0.18 : 1;
+      a.obj.scale.set(eb * (1 + (1 - amassa) * 0.4), eb * amassa, eb * (1 + (1 - amassa) * 0.4));
+    }
+    a.feixe.atualizar(c.indice === iDif ? t : -99, a.base.x, a.base.z, a.queda);
+    a.onda.atualizar(c.indice === iDif ? t : -99, a.base.x, a.base.z, a.queda, 3.5);
+    a.poeira.atualizar(c.indice === iDif ? t : -99, a.base.clone().add(V(0, 0.2, 0)), a.queda);
+    let kr = 0;
+    if (c.indice === iDif) kr = ss(t, a.queda + 0.1, a.queda + 0.3);
+    if (c.nome === 'panorama') { const ini = c.inicio + 0.4 + a.k * 0.6; kr = ss(t, ini, ini + 0.15) * (1 - ss(t, ini + 1.6, ini + 1.75)); }
+    rotulo(a.rot, kr, a.obj.position.clone().add(V(0, a.altura + (a.k % 2) * 0.35, 0)));
   }
 
   // Costelas 2 a 7
@@ -663,7 +685,7 @@ function renderizarEm(t) {
 
   const [pos, alvo] = cameraEm(c, t);
   const impacto = (t0, forca, dec = 5) => (t >= t0 ? Math.exp(-(t - t0) * dec) * forca : 0);
-  const tremor = efeitosPecas.reduce((s, e) => s + impacto(e.fim, 0.25, 6), 0) + impacto(F2, 0.3, 5) + impacto(P0, 0.08, 8)
+  const tremor = efeitosPecas.reduce((s, e) => s + impacto(e.fim, 0.25, 6), 0) + animaisNovos.slice(0, 3).reduce((s, a) => s + impacto(a.queda, 0.12, 6), 0) + impacto(P0, 0.08, 8) + impacto(MARCOS.trovaoTerror, 0.12, 4)
     + (c.nome === 'contador' && t > MARCOS.contaAte378[1] ? 0.03 : 0);
   pos.x += Math.sin(t * 61) * tremor; pos.y += Math.cos(t * 47) * tremor;
   camera.position.copy(pos);

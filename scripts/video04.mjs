@@ -80,7 +80,7 @@ fonte(aeval(`if(between(t,${c0},${c1}),0.25*sin(2*PI*(160+40*sin(2*PI*1.3*t))*t)
 fonte(aeval(somaDe([c1], 'sin(2*PI*(70+40*exp(-T*12))*T)*exp(-T*7)')), 'volume=0.7', 'paradaCarroca');
 
 // Feixes dourados (@rodri.cuts e o 2º elefante): subida + plim
-const FEIXES = [MARCOS.feixeRodri, MARCOS.feixeElefante];
+const FEIXES = [MARCOS.feixeRodri, ...MARCOS.quedas];
 fonte(aeval(FEIXES.map((F) => `if(between(t,${f(F - 0.45)},${f(F + 0.1)}),0.5*sin(2*PI*(300+900*clip((t-${f(F - 0.45)})/0.45,0,1))*t),0)`).join('+')), 'volume=0.22', 'subida');
 fonte(aeval(somaDe(FEIXES, '(0.6*sin(2*PI*1567.98*T)*exp(-T*7)+0.5*sin(2*PI*2093*T)*exp(-T*5)+0.3*sin(2*PI*2637*T)*exp(-T*4))')), 'volume=0.28', 'plim');
 
@@ -88,11 +88,17 @@ fonte(aeval(somaDe(FEIXES, '(0.6*sin(2*PI*1567.98*T)*exp(-T*7)+0.5*sin(2*PI*2093
 fonte(aeval(somaDe([MARCOS.placa], 'sin(2*PI*(90+60*exp(-T*25))*T)*exp(-T*9)')), 'volume=0.8', 'placa');
 fonte(aeval(somaDe(MARCOS.marteladasPlaca, '(0.9*sin(2*PI*(170+90*exp(-T*40))*T)*exp(-T*28)+0.5*sin(2*PI*1250*T)*exp(-T*90))')), 'volume=0.55', 'marteladas');
 
-// Elefante: baque + barrito (trombeta) + "aaah" fofo
-const F2 = MARCOS.feixeElefante;
-fonte(aeval(somaDe([F2], 'sin(2*PI*(45+40*exp(-T*6))*T)*exp(-T*2.2)')), 'volume=1.0', 'baque');
-fonte(aeval(somaDe([F2 + 0.35], 'lt(T,0.9)*sin(PI*T/0.9)*0.7*sin(2*PI*(520+180*sin(2*PI*1.1*T)+30*sin(2*PI*31*T))*T)')), 'bandpass=f=900:width_type=q:w=0.8,volume=0.9', 'barrito');
-fonte(aeval(somaDe([F2 + 0.5, F2 + 0.8, F2 + 1.1], '0.4*sin(2*PI*(1046.5+200*T)*T)*exp(-T*5)')), 'volume=0.2', 'coracoes');
+// Diferentões caindo: baque (o hipopótamo é o mais pesado) + a "voz" de cada um
+const [q0, q1, q2] = MARCOS.quedas;
+fonte(aeval(`${somaDe([q0], '0.4*sin(2*PI*(160+60*exp(-T*20))*T)*exp(-T*9)')}+${somaDe([q1], '0.5*sin(2*PI*(110+60*exp(-T*15))*T)*exp(-T*6)')}+${somaDe([q2], 'sin(2*PI*(40+40*exp(-T*6))*T)*exp(-T*2)')}`), 'volume=0.9', 'baques');
+fonte(aeval(`${somaDe([q0 + 0.25], 'lt(T,0.18)*0.5*sin(2*PI*(900-300*T/0.18)*T)')}+${somaDe([q1 + 0.25, q1 + 0.45], 'lt(T,0.16)*0.5*sin(2*PI*(620+80*sin(2*PI*40*T))*T)')}+${somaDe([q2 + 0.3], 'lt(T,0.7)*sin(PI*T/0.7)*0.7*sin(2*PI*(95+15*sin(2*PI*9*T))*T)')}`), 'volume=0.5', 'vozesBichos');
+
+// Terror: trovão, batida de coração, drone grave dissonante e acorde de susto no fim
+const [te0, te1] = MARCOS.terror;
+fonte(ruido('brown', 13), `lowpass=f=300,volume='if(gte(t,${f(MARCOS.trovaoTerror)}),1.4*(1-exp(-(t-${f(MARCOS.trovaoTerror)})*30))*exp(-(t-${f(MARCOS.trovaoTerror)})*0.7),0)':eval=frame,volume=5.5`, 'trovaoTerror');
+fonte(aeval(somaDe(serie(te0 + 0.4, te1 - 0.2, 0.75).flatMap((h) => [h, h + 0.22]), 'sin(2*PI*(50+25*exp(-T*20))*T)*exp(-T*12)')), 'volume=0.9', 'coracao');
+fonte(aeval(`if(between(t,${te0},${te1}),clip((t-${te0})/0.6,0,1)*clip((${te1}-t)/0.15,0,1)*(0.6*sin(2*PI*55*t)+0.4*sin(2*PI*77.78*t)+0.3*sin(2*PI*116.54*t+0.3*sin(2*PI*3*t))),0)`), 'lowpass=f=900,volume=0.35', 'droneTerror');
+fonte(aeval(somaDe([te1 - 0.35], '(0.5*sin(2*PI*233.08*T)+0.5*sin(2*PI*329.63*T)+0.4*sin(2*PI*466.16*T))*exp(-T*3)*lt(T,1.2)')), 'volume=0.3', 'susto');
 
 // "EU" caindo: um pop por balão
 fonte(aeval(somaDe(serie(MARCOS.baloes[0] + 0.3, MARCOS.baloes[1] + 0.3, (MARCOS.baloes[1] - MARCOS.baloes[0]) / 28), '0.5*sin(2*PI*(700+600*T)*T)*exp(-T*28)')), 'volume=0.22', 'baloes');
@@ -129,7 +135,8 @@ const musica = [
   arpejo(0, INI_CONT, 0.25, feliz, '0.8'),
   arpejo(INI_FAIXA, INI_MULT, 0.3, pizz, '0.8'),
   arpejo(INI_MULT, FIM_MULT, 0.2, heroico, '1'),
-  arpejo(FIM_MULT, INI_UP, 0.3, pizz, '0.7'),
+  arpejo(FIM_MULT, te0, 0.3, pizz, '0.7'),
+  arpejo(te1, INI_UP, 0.3, pizz, '0.7'),
   arpejo(INI_UP, FIM_PAN, 0.2, heroico, '0.9'),
   arpejo(INI_FINAL, D - 0.2, 0.14, urgente, '0.9'),
 ].join('+');

@@ -2,7 +2,7 @@
 // Fonte única para a imagem (js/video04.js), a narração (scripts/narracao.mjs --video=04)
 // e a trilha (scripts/video04.mjs). Roteiro: docs/roteiro-video-04.md
 
-export const DURACAO = 51;
+export const DURACAO = 55;
 
 export const SEGUIDORES = { antes: 75, depois: 378, proxima: 400 };
 export const PECAS = { antes: 4, depois: 10 }; // suportes..1ª costela → até a 7ª costela
@@ -21,15 +21,16 @@ export const FALAS = [
   [11.4, 14.8, 'Bem-vindos, *ajudantes!* Procura teu nome aí!'],
   [16.5, 19.9, 'Caminhão eu não sei o que é… mas *material* chegou!', 'Caminhão eu não sei o que é... mas material chegou!'],
   [20.6, 23.8, 'Rodri Cuts… *dessa* *vez* eu te escolhi.', 'Rodri Cuts... dessa vez eu te escolhi.'],
-  [24.4, 27.7, 'Cupim? Numa obra de *madeira?* Nem pensar.'],
-  [28.5, 30.9, 'Agora sim! O elefante tem *par.*'],
-  [31.4, 34.7, 'Já entendi, Davi! Ajudante *vinte* *e* *sete* vezes!'],
-  [35.0, 41.4, 'Segunda… terceira… quarta… quinta… sexta… *SÉTIMA* costela!', 'Segunda... terceira... quarta... quinta... sexta... sétima costela!'],
-  [42.2, 45.4, 'Olha o *tamanho* que isso tá ficando…', 'Olha o tamanho que isso tá ficando...'],
-  [46.2, 50.6, 'Faltam só *vinte* *e* *dois…* e alguém viu um *cupim* por aí?', 'Faltam só vinte e dois... e alguém viu um cupim por aí?'],
+  [24.4, 26.5, 'Cupim? Numa obra de *madeira?*'],
+  [27.3, 30.2, 'Quem pedir cupim… *vai* *se* *ver* *comigo.*', 'Quem pedir cupim... vai se ver comigo.'],
+  [30.6, 34.9, 'Ornitorrinco… *flamingo…* hipopótamo?! Que arca *diferente!*', 'Ornitorrinco... flamingo... hipopótamo?! Que arca diferente!'],
+  [35.3, 38.6, 'Já entendi, Davi! Ajudante *vinte* *e* *sete* vezes!'],
+  [38.9, 45.3, 'Segunda… terceira… quarta… quinta… sexta… *SÉTIMA* costela!', 'Segunda... terceira... quarta... quinta... sexta... sétima costela!'],
+  [46.1, 49.3, 'Olha o *tamanho* que isso tá ficando…', 'Olha o tamanho que isso tá ficando...'],
+  [50.1, 54.5, 'Faltam só *vinte* *e* *dois…* e alguém viu um *cupim* por aí?', 'Faltam só vinte e dois... e alguém viu um cupim por aí?'],
 ];
 
-export const VOZES = ['noe', 'noe', 'vizinho', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe'];
+export const VOZES = ['noe', 'noe', 'vizinho', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe', 'noe'];
 
 export const INTERPRETACAO = [
   { stability: 0.4, style: 0.6 },               // orgulhoso
@@ -39,7 +40,8 @@ export const INTERPRETACAO = [
   { stability: 0.35, style: 0.7 },              // confuso e feliz
   { stability: 0.45, style: 0.5, speed: 0.95 }, // carinhoso
   { stability: 0.35, style: 0.75 },             // bravo, engraçado
-  { stability: 0.35, style: 0.7 },              // aliviado
+  { stability: 0.6, style: 0.55, speed: 0.85 }, // ameaçador, grave e devagar (terror)
+  { stability: 0.3, style: 0.85, speed: 1.1 },  // espantado e divertido
   { stability: 0.3, style: 0.8, speed: 1.1 },   // rindo
   { stability: 0.25, style: 0.9 },              // crescendo, épico
   { stability: 0.45, style: 0.5, speed: 0.95 }, // maravilhado
@@ -48,8 +50,8 @@ export const INTERPRETACAO = [
 
 export const CENAS = [
   [0, 'festa'], [4.0, 'contador'], [8.3, 'faixa'], [11.2, 'multidao'], [16.2, 'carroca'],
-  [20.2, 'rodri'], [24.2, 'cupim'], [28.2, 'elefante'], [31.2, 'davi'], [34.6, 'upgrade'],
-  [42.0, 'panorama'], [46.0, 'final'],
+  [20.2, 'rodri'], [24.2, 'cupim'], [30.3, 'diferentoes'], [35.0, 'davi'], [38.6, 'upgrade'],
+  [45.9, 'panorama'], [49.9, 'final'],
 ];
 
 export const MARCOS = {
@@ -62,24 +64,28 @@ export const MARCOS = {
   creditos: [11.3, 16.1],      // os 100 @ mais novos sobem na tela
   carroca: [16.3, 18.2],       // a carroça entra e para
   feixeRodri: 22.4,
-  placa: 25.4,                 // a placa cai e o Noé crava
-  marteladasPlaca: [25.9, 26.35, 26.8],
-  feixeElefante: 28.9,
-  baloes: [31.5, 33.6],        // os "EU" caem em cima do Noé
-  pecasInicio: 35.1,           // costelas 2 a 7 (uma por segundo)
+  placa: 25.0,                 // a placa cai e o Noé crava
+  marteladasPlaca: [25.45, 25.9, 26.35],
+  terror: [26.8, 30.25],       // céu escuro, luz vermelha e zoom no rosto do Noé
+  trovaoTerror: 26.9,
+  quedas: [30.8, 31.9, 33.1],  // ornitorrinco, flamingo e hipopótamo caem do céu
+  baloes: [35.4, 37.5],        // os "EU" caem em cima do Noé
+  pecasInicio: 39.0,           // costelas 2 a 7 (uma por segundo)
   pecasPasso: 1.0,
-  cartao: 47.2,
-  toque: 48.2,
-  cupimEspia: [48.6, 50.4],    // o cupim espia atrás da tora
+  cartao: 51.0,
+  toque: 52.0,
+  cupimEspia: [52.4, 54.3],    // o cupim espia atrás da tora
 };
 
 // Cartões de comentário (texto): o @ e o comentário de quem escreveu
 export const COMENTARIOS = [
   { cartoes: [{ arroba: '@garciaxxzn', texto: 'Eu ajudante de caminhão com material' }], inicio: 16.4, fim: 20.0 },
   { cartoes: [{ arroba: '@rodri.cuts', texto: 'Poxa mano noé, nem me escolheu😔' }], inicio: 20.3, fim: 22.3 },
-  { cartoes: [{ arroba: '@oi_boanoite143667', texto: 'Eu quero ser o cupim' }, { arroba: '@_pandilhawzs7', texto: 'Eu quero ser um cupim' }], inicio: 24.3, fim: 25.4 },
-  { cartoes: [{ arroba: '@_pandilhawzs7', texto: '@arca_do_noee então me deixa ser um elefante' }], inicio: 28.3, fim: 30.2 },
-  { cartoes: [{ arroba: '@davi.lucas.0077', texto: 'Eiu😂', extra: '+27 comentários "Eu"' }], inicio: 31.3, fim: 34.3 },
+  { cartoes: [{ arroba: '@oi_boanoite143667', texto: 'Eu quero ser o cupim' }, { arroba: '@_pandilhawzs7', texto: 'Eu quero ser um cupim' }], inicio: 24.3, fim: 25.2 },
+  { cartoes: [{ arroba: '@negao_paciencia', texto: 'Ornitorrinco' }], inicio: 30.5, fim: 31.75 },
+  { cartoes: [{ arroba: '@barbara.ilopes', texto: 'Hey um flamingo 🦩' }], inicio: 31.75, fim: 32.85 },
+  { cartoes: [{ arroba: '@kendrewff', texto: 'Ajudante quero ser um hipopótamo' }], inicio: 32.85, fim: 34.9 },
+  { cartoes: [{ arroba: '@davi.lucas.0077', texto: 'Eiu😂', extra: '+27 comentários "Eu"' }], inicio: 35.1, fim: 38.4 },
 ];
 
 // Os 100 seguidores mais novos (créditos)
@@ -107,14 +113,11 @@ export const NOVOS = [
 export const AJUDANTES_COMENTARIO = ['@marcelavalentinapp', '@dionisio11_', '@vosso_rei9173', '@cmsilvaxx', '@joaozn_dlx01',
   '@marcos.rafael13_', '@eodpaz7', '@o_davi.nunes', '@ligiaeduarda10', '@itzrafaxx', '@dieguin_dgrau', '@trista_costa'];
 
-// Animais novos (com o @ de quem pediu) que aparecem no panorama
+// Os "diferentões" (com o @ de quem pediu): os três primeiros caem do céu na cena deles,
+// e todos aparecem no panorama. Os outros modelados (golira, camaleão, macaco, tigre…) ficam para os próximos vídeos.
 export const ANIMAIS_NOVOS = [
-  { tipo: 'gato', arroba: '@_dudu.ofcx' },
-  { tipo: 'galinha', arroba: '@_anna_ruthy' },
-  { tipo: 'cachorro', arroba: '@emanuely_da_fiel08' },
-  { tipo: 'jacare', arroba: '@pequenoatleta06' },
-  { tipo: 'leao', arroba: '@rebeca_camargo346' },
-  { tipo: 'cavalo', arroba: '@aparecidolorenzo07' },
-  { tipo: 'aguia', arroba: '@amigo_legal_silvax' },
-  { tipo: 'gaviao', arroba: '@pyetrayasmin11' },
+  { tipo: 'ornitorrinco', arroba: '@negao_paciencia' },
+  { tipo: 'flamingo', arroba: '@barbara.ilopes' },
+  { tipo: 'hipopotamo', arroba: '@kendrewff' },
+  { tipo: 'flamingo', arroba: '@pxt_luan7' }, // o casal de flamingo
 ];
