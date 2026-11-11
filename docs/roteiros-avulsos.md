@@ -104,32 +104,13 @@ Mesmo formato (gancho → revelação → versículo na tela → pergunta). Uma 
 
 ---
 
-## Avulso 03: "POV: você tá construindo um barco no meio do deserto"
+## Avulso 03: "POV: você tá construindo um barco a 500 km do mar"
 
-**Formato:** 25 s · **Tipo:** humor com mensagem (o público se identifica com "todo mundo duvidou de mim").
-**Personagem novo:** o **Vizinho**, um boneco com a mesma base dos ajudantes, só que de braços cruzados
-e com outra roupa. Pode virar personagem fixo dos avulsos de humor.
+**Formato:** ~26 s · **Tipo:** humor com mensagem (o público se identifica com "todo mundo duvidou de mim").
+O Vizinho zomba da obra ("cadê o mar?"), começa a chover, ele volta encharcado pedindo para ser ajudante
+e vira ajudante ao "seguir o perfil".
 
-| Tempo | Imagem | Fala |
-| --- | --- | --- |
-| 0–2,5 | Céu limpo, sol forte, Noé martelando. Texto: **"POV: você tá construindo um barco no meio do deserto ☀️"** | (só marteladas) |
-| 2,5–6 | O Vizinho entra no quadro, de braços cruzados | **Vizinho:** "Ô Noé… cadê o **mar**?" |
-| 6–9 | Noé nem olha, continua martelando | **Noé:** "Vai chover." |
-| 9–13 | O Vizinho olha para o céu azul, depois para a câmera. Grilos | **Vizinho:** "Chover… **o quê?**" |
-| 13–17 | Corte com texto **"ALGUM TEMPO DEPOIS…"**: céu escuro, trovão, primeiras gotas | (trovão) |
-| 17–21 | O Vizinho aparece encharcado batendo na porta da arca. O Noé aparece na janela | **Vizinho:** "Noé… ainda tem **vaga**?" / **Noé:** "Tem que seguir o perfil." |
-| 21–25 | Texto: **"SEGUE ANTES QUE COMECE A CHOVER ⛈️"** + cartão de seguir | **Noé:** "Comenta aí: você seria o **vizinho** ou o **ajudante**?" |
-
-### Legenda do post
-
-> Todo mundo riu… até começar a chover ⛈️😂
-> Você seria o vizinho ou o ajudante? Comenta 👇
->
-> Segue antes que a porta feche 🛶🔨
->
-> #arcadonoe #noé #pov #humor #fé #reels #fyp #animação3d
-
-**Comentário fixado:** "Comenta 🔨 se você seria AJUDANTE ou 😂 se seria o VIZINHO"
+Roteiro completo: [`roteiro-avulso-pov.md`](roteiro-avulso-pov.md).
 
 ---
 
