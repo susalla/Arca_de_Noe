@@ -378,6 +378,7 @@ export const TIPOS_DE_ANIMAIS = {
   urubu:    { emoji: '🐦‍⬛', passaro: true, tamanho: 1.15, cor: '#1c1c1f', corCabeca: '#4a4a50', bico: '#9a9a9a', asa: '#141416', careca: true },
   picapau:  { emoji: '🐦', passaro: true, tamanho: 0.75, cor: '#1f1f22', corCabeca: '#c0392b', peito: '#f2f2f2', bico: '#d9a531', asa: '#2a2a2e', crista: '#d62d20', bicoLongo: true, listras: '#f2f2f2' },
   onca:     { emoji: '🐆', corpo: [1.45, 0.6, 0.55], perna: 0.55, pescoco: 0.18, cabeca: 0.42, cor: '#e3a63d', manchas: '#3a2410', manchasQtd: 16, orelhinhas: true, raboLongo: 1.0 },
+  lontra:       { emoji: '🦦', corpo: [0.85, 0.3, 0.32], perna: 0.14, pescoco: 0.08, cabeca: 0.26, cor: '#6b4a2e', corCabeca: '#a07a55', raboGrosso: true, raboLongo: 0.6, orelhinhas: true },
   // Os "diferentões" pedidos nos comentários
   hipopotamo:   { emoji: '🦛', corpo: [1.9, 1.0, 1.1], perna: 0.42, pescoco: 0.05, cabeca: 0.68, cor: '#8a7b8f', focinho: 0.42, orelhinhas: true, dentoes: true },
   ornitorrinco: { emoji: '🦫', corpo: [0.75, 0.3, 0.45], perna: 0.1, pescoco: 0.02, cabeca: 0.26, cor: '#7a4b2a', bicoPato: '#3a3a3e', raboRemo: true },
@@ -703,10 +704,11 @@ export function criarAnimal(tipo, semente) {
     // já tem rabo próprio
   } else if (p.raboLongo) {
     // rabo longo e afinando para trás
-    const rabo = new THREE.Mesh(new THREE.ConeGeometry(p.escamas ? cp * 0.33 : 0.09, p.raboLongo, 5), corpoMat);
+    const reto = p.escamas || p.raboGrosso; // jacaré e lontra: rabo grosso e reto, rente ao chão
+    const rabo = new THREE.Mesh(new THREE.ConeGeometry(reto ? cp * 0.33 : 0.09, p.raboLongo, 5), corpoMat);
     rabo.rotation.z = Math.PI / 2; // ponta para -x
-    rabo.position.set(-frente - p.raboLongo / 2 + 0.05, p.perna + ca * (p.escamas ? 0.4 : 0.75), 0);
-    if (!p.escamas) { // felino: rabo sobe em curva para trás
+    rabo.position.set(-frente - p.raboLongo / 2 + 0.05, p.perna + ca * (reto ? 0.4 : 0.75), 0);
+    if (!reto) { // felino: rabo sobe em curva para trás
       rabo.rotation.z = Math.PI / 2 - 0.55;
       rabo.position.set(-frente - p.raboLongo * 0.42, p.perna + ca * 0.75 + p.raboLongo * 0.24, 0);
     }
@@ -767,4 +769,66 @@ export class Animais {
       a.obj.visible = k > 0 || a.entrada === null;
     }
   }
+}
+
+// ------------------------------------------------------------- Cupim
+// O "vilão" fofo do canal: cabeça marrom, corpo creme, olhos grandes e antenas.
+// Olha para +z. userData: antenas (para acenar) e mandibula (para roer).
+export function criarCupim() {
+  const g = new THREE.Group();
+  const corpoMat = mat('#f1e3c4');
+  const cabecaMat = mat('#a0522d');
+  const cab = new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 1), cabecaMat);
+  const corpo = new THREE.Mesh(new THREE.IcosahedronGeometry(0.14, 1), corpoMat);
+  corpo.position.set(0, -0.17, -0.12);
+  for (const l of [-1, 1]) {
+    const o = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), new THREE.MeshStandardMaterial({ color: '#fff', roughness: 0.4 }));
+    o.position.set(l * 0.07, 0.05, 0.13);
+    const pupila = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 4), new THREE.MeshStandardMaterial({ color: '#111' }));
+    pupila.position.set(l * 0.06, 0.05, 0.18);
+    g.add(o, pupila);
+  }
+  const antenas = [-1, 1].map((l) => {
+    const pivo = new THREE.Group();
+    pivo.position.set(l * 0.07, 0.12, 0.04);
+    const a = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.012, 0.25, 4).translate(0, 0.12, 0), cabecaMat);
+    pivo.add(a);
+    pivo.rotation.z = -l * 0.5;
+    g.add(pivo);
+    return pivo;
+  });
+  const mandibula = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.03, 0.06), mat('#5a2e14'));
+  mandibula.position.set(0, -0.07, 0.15);
+  g.add(cab, corpo, mandibula);
+  g.userData.antenas = antenas;
+  g.userData.mandibula = mandibula;
+  return sombra(g);
+}
+
+// --------------------------------------------------------- Tardígrado
+// O "urso-d'água": gordinho, em gomos, com 8 perninhas e boca de tubo. Olha para +z.
+export function criarTardigrado() {
+  const g = new THREE.Group();
+  const pele = mat('#e8c9b0');
+  for (let i = 0; i < 4; i++) {
+    const gomo = new THREE.Mesh(new THREE.SphereGeometry(0.11 - Math.abs(i - 1.5) * 0.012, 10, 8), pele);
+    gomo.scale.set(1, 0.85, 0.9);
+    gomo.position.set(0, 0.12, -0.24 + i * 0.13);
+    g.add(gomo);
+    for (const l of [-1, 1]) {
+      const perna = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 0.08, 6), pele);
+      perna.position.set(l * 0.08, 0.04, -0.24 + i * 0.13);
+      g.add(perna);
+    }
+  }
+  const boca = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.06, 8), mat('#c99b80'));
+  boca.rotation.x = Math.PI / 2;
+  boca.position.set(0, 0.11, 0.2);
+  g.add(boca);
+  for (const l of [-1, 1]) {
+    const olho = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 4), mat('#111'));
+    olho.position.set(l * 0.045, 0.16, 0.17);
+    g.add(olho);
+  }
+  return sombra(g);
 }
