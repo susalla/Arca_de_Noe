@@ -158,7 +158,7 @@ const encapuzado = criarBoneco('#2a2a30', '#1a1a1e');
   }
 }
 encapuzado.scale.setScalar(1.45);
-encapuzado.position.copy(LINHA).add(V(1.45, 0, 0));
+encapuzado.position.copy(LINHA); // no meio da fila: o @ cabe inteiro em cima dele
 cena.add(encapuzado);
 const rotuloEncapuzado = etiqueta3D('@emanuel_.boyzao ?', { fundo: '#ffd23f', altura: 0.34, fonte: 44 });
 cena.add(rotuloEncapuzado);
@@ -498,14 +498,14 @@ function renderizarEm(t) {
   encapuzado.rotation.y = Math.sin(t * 1.3) * 0.15;
   const flash = Math.max(0, ...flashSuspeitos.map((h) => (t > h && t < h + 0.35 ? Math.exp(-(t - h) * 12) : 0)));
   $('flash').style.opacity = String(naFila ? flash * 0.9 : 0);
-  rotulo(rotuloEncapuzado, naFila ? ss(t, flashSuspeitos[2], flashSuspeitos[2] + 0.2) : 0, encapuzado.position.clone().add(V(0, 2.4, 0)));
+  rotulo(rotuloEncapuzado, naFila ? ss(t, flashSuspeitos[2], flashSuspeitos[2] + 0.2) : 0, encapuzado.position.clone().add(V(0, 2.3, 0)));
 
   // Vizinho: suspeito assobiando; depois perde o chapéu para o caramelo
   const v = vizinho;
   v.neutro();
   v.grupo.visible = naFila || c.nome === 'caramelo';
   if (naFila) {
-    v.grupo.position.copy(LINHA);
+    v.grupo.position.copy(LINHA).add(V(1.45, 0, 0));
     v.grupo.rotation.y = 0;
     v.bracoDir.rotation.set(0.6, 0, -0.2); v.bracoEsq.rotation.set(0.6, 0, 0.2); // mãos para trás
     v.cabeca.rotation.set(-0.25, 0, Math.sin(t * 3) * 0.12); // olhando para cima, disfarçando
@@ -602,7 +602,7 @@ function renderizarEm(t) {
     const pulo2 = Math.max(0, ...tremores.map((h) => (t > h && t < h + 0.35 ? Math.sin(((t - h) / 0.35) * Math.PI) * (0.25 + k * 0.05) : 0)));
     tora.position.copy(tora.userData.base).add(V(0, pulo2, 0));
   });
-  pegada.visible = noite && t > MARCOS.pegada;
+  pegada.visible = Boolean(noite && t > MARCOS.pegada);
   poeiraPegada.atualizar(noite ? t : -99, pegada.position.clone().add(V(0, 0.2, 0)), MARCOS.pegada);
 
   const [pos, alvo] = cameraEm(c, t);

@@ -154,7 +154,7 @@ rodar('ffmpeg', ['-y', '-loglevel', 'error', '-i', IMAGEM, '-i', TRILHA,
 // Capa: a fila de suspeitos
 const CAPA = resolve(VIDEOS, 'video-05-capa.jpg');
 const ttf = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
-rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '10.7', '-i', IMAGEM, '-frames:v', '1',
+rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '11.95', '-i', IMAGEM, '-frames:v', '1',
   '-vf', `drawbox=y=ih*0.62:w=iw:h=ih*0.2:color=black@0.6:t=fill,` +
     `drawtext=fontfile=${ttf}:text='TEM UM TRAIDOR':fontcolor=white:fontsize=88:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.635,` +
     `drawtext=fontfile=${ttf}:text='NA ARCA!':fontcolor=0xffd23f:fontsize=100:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.71`,
