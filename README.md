@@ -92,6 +92,12 @@ Roteiro e legenda: [`docs/roteiro-video-04.md`](docs/roteiro-video-04.md). Gere 
 (saída: `videos/video-04.mp4` + capa). Os comentários aparecem como cartão de texto (@ + comentário),
 e os 100 seguidores mais novos sobem na tela como créditos.
 
+## Vídeo 05: "O traidor da arca"
+
+Roteiro e legenda: [`docs/roteiro-video-05.md`](docs/roteiro-video-05.md). Gere com `npm run video:05`
+(saída: `videos/video-05.mp4` + capa). Mistério do buraco, fila de suspeitos, harpia trazendo as costelas 8 a 10
+e cena pós-créditos com a pegada de T-rex.
+
 ## Vídeos avulsos (fora da obra)
 
 Vídeos só para engajar, que não avançam a arca. Ideias e roteiros: [`docs/roteiros-avulsos.md`](docs/roteiros-avulsos.md).
