@@ -279,9 +279,13 @@ function criarInterior() {
 
 // Quantos seguidores são necessários para liberar a peça i.
 // Curva quadrática: no começo cada poucos seguidores já mostram progresso.
+// Curva de liberação das peças: 1.25 é quase linear (uma peça a cada ~180 seguidores com meta 10.000).
+// Era 2 (quadrática), mas os seguidores cresceram rápido e a obra precisava durar mais.
+export const EXPOENTE_CURVA = 1.25;
+
 export function limiarDaPeca(i, total, meta) {
   if (i === 0) return 1;
-  return Math.max(i + 1, Math.round(meta * Math.pow((i + 1) / total, 2)));
+  return Math.max(i + 1, Math.round(meta * Math.pow((i + 1) / total, EXPOENTE_CURVA)));
 }
 
 export class Arca {

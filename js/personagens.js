@@ -388,6 +388,7 @@ export const TIPOS_DE_ANIMAIS = {
   puma:         { emoji: '🐆', corpo: [1.4, 0.58, 0.5], perna: 0.55, pescoco: 0.18, cabeca: 0.4, cor: '#c49a62', orelhinhas: true, raboLongo: 1.0 },
   gorila:       { emoji: '🦍', primata: true, tamanho: 1.35, cor: '#2b2b2e', rosto: '#4a4448', costas: '#9a9aa0' },
   macaco:       { emoji: '🐒', primata: true, tamanho: 0.7, cor: '#8a5a2b', rosto: '#e2b98c', rabo: true },
+  harpia:       { emoji: '🦅', passaro: true, tamanho: 2.6, cor: '#3a3a3e', corCabeca: '#c9c9cc', peito: '#efefef', bico: '#222', asa: '#45454a', crista: '#55555a' },
   flamingo:     { emoji: '🦩', passaro: true, tamanho: 1.0, cor: '#f48fb1', corCabeca: '#f48fb1', bico: '#2b2b2b', asa: '#ec6f9c', pernaLonga: '#f06292', pescocoLongo: true },
   bicodesapato: { emoji: '🐦', passaro: true, tamanho: 1.2, cor: '#8c97a3', corCabeca: '#9aa4ae', bico: '#c8b27a', asa: '#6f7a86', bicoSapato: true, pernaLonga: '#3a3a3a' },
   queroquero:   { emoji: '🐦', passaro: true, tamanho: 0.8, cor: '#b8b4a8', corCabeca: '#cfccc2', peito: '#1e1e1e', bico: '#d84b3a', asa: '#8a8678', pernaLonga: '#d84b3a' },

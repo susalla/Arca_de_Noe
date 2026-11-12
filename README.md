@@ -9,8 +9,8 @@ os ajudantes aparecem em volta da obra e, no fim, os animais chegam em casais.
 - **Ajudantes:** um bonequinho para cada seguidor (até 600 desenhados na tela; o contador continua acima disso).
 - **Arca:** 55 peças, em ordem de construção: suportes → quilha → fundo → 11 costelas → 32 tábuas →
   convés → cabine → janelas → telhado → porta → rampa. Cada peça é liberada ao atingir um número de seguidores.
-  A curva é quadrática: no começo poucos seguidores já mostram progresso (a 1ª peça sai com 1 seguidor,
-  a 10ª com ~330), e a arca fica pronta na `meta` (padrão: 10.000).
+  A curva é quase linear (`EXPOENTE_CURVA = 1.25` em `js/arca.js`): uma peça a cada ~180 seguidores,
+  e a arca fica pronta na `meta` (padrão: 10.000). Com 1700 seguidores são 13 peças (até a 10ª costela).
 - **Clima:** o céu vai escurecendo conforme a arca fica pronta. O dilúvio está chegando!
 - **Animais:** você escolhe quais casais entram, em `progresso.json`.
 - **Nomes:** os @ dos novos ajudantes do dia aparecem flutuando sobre eles.
