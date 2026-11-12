@@ -98,6 +98,8 @@ Vídeos só para engajar, que não avançam a arca. Ideias e roteiros: [`docs/ro
 
 - **POV "barco a 500 km do mar"** (Noé + Vizinho, duas vozes): [`docs/roteiro-avulso-pov.md`](docs/roteiro-avulso-pov.md).
   Gere com `npm run video:pov` (saída: `videos/avulso-pov.mp4` + capa).
+- **Noé responde comentários #1:** [`docs/roteiro-responde-1.md`](docs/roteiro-responde-1.md).
+  Gere com `npm run video:responde1` (saída: `videos/responde-1.mp4` + capa).
 
 ## Rodar localmente
 
