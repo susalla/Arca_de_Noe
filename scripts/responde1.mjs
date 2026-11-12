@@ -147,7 +147,7 @@ const ttf = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
 rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '5.0', '-i', IMAGEM, '-frames:v', '1',
   '-vf', `drawbox=y=ih*0.62:w=iw:h=ih*0.2:color=black@0.6:t=fill,` +
     `drawtext=fontfile=${ttf}:text='NOÉ RESPONDE #1':fontcolor=white:fontsize=84:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.635,` +
-    `drawtext=fontfile=${ttf}:text='CHANTAGEM COM CUPIM?!':fontcolor=0xffd23f:fontsize=76:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.72`,
+    `drawtext=fontfile=${ttf}:text='CHANTAGEM COM CUPIM?!':fontcolor=0xffd23f:fontsize=62:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.72`,
   '-q:v', '2', CAPA]);
 
 console.log(`\nPronto:\n  ${VIDEO}\n  ${CAPA}`);
