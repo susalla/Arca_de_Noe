@@ -1,7 +1,7 @@
 # Contexto do projeto: A Arca do Noé (@arca_do_noee)
 
 Resumo de tudo o que foi decidido e produzido nesta conversa, para retomar o trabalho em qualquer sessão.
-Atualizado em 13/11/2026. Branch de trabalho: `claude/practical-knuth-8knwcq`.
+Atualizado em 13/11/2026 (vídeo 06). Branch de trabalho: `claude/eloquent-hypatia-gj9ec9`.
 
 ---
 
@@ -45,7 +45,7 @@ Atualizado em 13/11/2026. Branch de trabalho: `claude/practical-knuth-8knwcq`.
 
 ## 3. A arca e a regra das peças
 
-- **Peças:** 55 no total, na ordem suportes → quilha → fundo → 11 costelas → 32 tábuas → convés → cabine → janelas → telhado → porta → rampa.
+- **Peças:** 56 no total (as contas antigas usavam 55; o site e os vídeos usam 56), na ordem suportes → quilha → fundo → 11 costelas → 32 tábuas → convés → cabine → janelas → telhado → porta → rampa.
 - **Ordem das costelas:** do centro para as pontas. A peça 3 é a 1ª costela, e a peça 10 é a 8ª.
 - **Curva atual:** `EXPOENTE_CURVA = 1.25` em `js/arca.js`, quase linear, com `meta` de 10.000. Dá mais ou menos uma peça a cada ~180 seguidores.
   - Antes a curva era quadrática (expoente 2). Mudou no vídeo 05 porque com 1700 seguidores pularia para 22 peças.
@@ -54,11 +54,12 @@ Atualizado em 13/11/2026. Branch de trabalho: `claude/practical-knuth-8knwcq`.
 | --- | --- | --- |
 | 75 | 4 | vídeo 03 (quilha, fundo, 1ª costela) |
 | 378 | 10 | vídeo 04 (até a 7ª costela), ainda na curva antiga |
-| **1700** | **13** | **vídeo 05 (até a 10ª costela, 24%)** |
-| 1808 | 14 | próxima peça: 11ª costela |
-| 2000 / 3000 / 5000 / 10000 | 15 / 20 / 31 / 55 | projeção |
+| 1700 | 13 | vídeo 05 (até a 10ª costela, 23%) |
+| **2700** | **19** | **vídeo 06 (11ª costela + tábuas 1 a 5, 34%)** |
+| 2761 | 20 | próxima peça: 6ª tábua |
+| 5000 / 10000 | ~31 / 56 | projeção |
 
-`progresso.json` atual: dia 5, 1700 seguidores, meta 10.000.
+`progresso.json` atual: dia 6, 2700 seguidores, meta 10.000.
 
 ---
 
@@ -82,6 +83,7 @@ Atualizado em 13/11/2026. Branch de trabalho: `claude/practical-knuth-8knwcq`.
   - **Construtores próprios:** tardígrado (`criarTardigrado()`) e cupim (`criarCupim()`).
 - **Já usados nos vídeos:** ornitorrinco, flamingo, hipopótamo, golira, camaleão, lontra, tardígrado e harpia.
 - **Modelados e ainda não usados:** macaco, tigre, puma, lagarto, bico-de-sapato e quero-quero.
+- **Novos no vídeo 06:** `criarTrex()` (bracinho com martelo), `criarDragao()` (rosa, asas laranjas, funciona com `baterAsas`), e os tipos `arara`, `lobo` e `maracaja`.
 
 ---
 
@@ -96,6 +98,7 @@ Atualizado em 13/11/2026. Branch de trabalho: `claude/practical-knuth-8knwcq`.
 | 04 | "Era pra ser 200… chegaram 378!" | 55 s | `npm run video:04` | `docs/roteiro-video-04.md` |
 | Avulso | "Noé responde comentários #1" | 50 s | `npm run video:responde1` | `docs/roteiro-responde-1.md` |
 | 05 | "O traidor da arca" | 54 s | `npm run video:05` | `docs/roteiro-video-05.md` |
+| 06 | "O roubo da madeira" | 72,5 s | `npm run video:06` | `docs/roteiro-video-06.md` |
 
 Cada comando tem a variante `:audio`, que refaz só a voz e a trilha e reaproveita a imagem gravada. Saídas: `videos/<nome>.mp4` e `videos/<nome>-capa.jpg`.
 
@@ -143,6 +146,16 @@ Cada comando tem a variante `:audio`, que refaz só a voz e a trilha e reaprovei
 - **Final:** o olho espia pelo buraco e vem a pergunta "QUEM É O TRAIDOR? Comenta".
 - **Pós-créditos:** pegada de T-rex. O cartão é do @vvgh_244, e o Noé sussurra "…Isso não é um cupim."
 
+**Vídeo 06 "O roubo da madeira"** (DIA 6, 1700 → 2700, 72,5 s, visual de cinema)
+- **Abertura fria:** o encapuzado rouba a madeira na chuva (@emanuel_.boyzao: "irei roubar os materiais"), título de filme "O ROUBO".
+- **Cena do crime:** o @gabrielteixeira6191 vira detetive; a lupa acha um **fio roxo**; o Vizinho: "roxo é bem comum, né?"; cartão do @joaquim.mello17 "Vizinho".
+- **T-rex:** sai da neblina, ruge e **devolve as toras** (@pedro_2015_22, @guisimoes7777, @vvgh_244); o bracinho não alcança o prego.
+- **+1000:** créditos dos 200 novos; @dinheiro854 e @cofrinho2026 ("finalmente verba"); selo "VOCÊS APARECERAM" para @gael_kk22, @gabee.wxz_, @sr_allan91 e @pietranicolli124.
+- **Anime (homenagem):** o ajudante do @guilherme_lima.2310 fica de cabelo prateado com aura (promessa da página cumprida); a turma corre de braços para trás com tora na cabeça e um estica o braço de borracha.
+- **Obra:** 11ª costela (esqueleto completo) + tábuas 1 a 5 (23% → 34%).
+- **Insistentes:** arara do @biel.x7_ga (5º dia), lobo do @alyfergabrielcamargo (×30), maracujá/maracajá da @maria_luiza02015 (×30).
+- **Final:** faltam 61 para a 6ª tábua; chinelo do @lazaroluizgabryell no cupim. **Pós-créditos:** o dragão rosa (@neguim.031, @dinheiro854) espanta o encapuzado.
+
 As legendas prontas e os comentários fixados de cada vídeo estão no respectivo `docs/roteiro-*.md`.
 
 ---
@@ -150,7 +163,9 @@ As legendas prontas e os comentários fixados de cada vídeo estão no respectiv
 ## 6. Material guardado para os próximos vídeos
 
 ### Ganchos em aberto
-- **Quem é o traidor?** Usar os palpites dos comentários no próximo vídeo (ex.: "vocês acusaram o vizinho…").
+- **Quem é o traidor?** No vídeo 06 o encapuzado roubou a madeira e deixou um **fio roxo** (o Vizinho disfarçou: "roxo é bem comum"). Usar os palpites dos comentários no próximo.
+- **O dragão rosa de asas laranjas** (@neguim.031 e @dinheiro854) virou o segurança da arca no pós-créditos do vídeo 06.
+- **O T-rex** (@pedro_2015_22, @guisimoes7777, @vvgh_244) é ajudante, mas o bracinho não alcança o prego.
 - **O dinossauro da pegada.** Pedidos de dinossauro:
   - **T-rex:** @vvgh_244 ("dia 2 pedindo").
   - **Espinossauro:** @lor.enzo_cardo.so.

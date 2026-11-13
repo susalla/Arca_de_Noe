@@ -98,6 +98,12 @@ Roteiro e legenda: [`docs/roteiro-video-05.md`](docs/roteiro-video-05.md). Gere 
 (saída: `videos/video-05.mp4` + capa). Mistério do buraco, fila de suspeitos, harpia trazendo as costelas 8 a 10
 e cena pós-créditos com a pegada de T-rex.
 
+## Vídeo 06: "O roubo da madeira"
+
+Roteiro e legenda: [`docs/roteiro-video-06.md`](docs/roteiro-video-06.md). Gere com `npm run video:06`
+(saída: `videos/video-06.mp4` + capa). Visual de cinema: roubo na chuva, fio roxo na cena do crime, o T-rex devolvendo
+a madeira, a transformação de anime, o esqueleto completo com as primeiras tábuas e o dragão rosa no pós-créditos.
+
 ## Vídeos avulsos (fora da obra)
 
 Vídeos só para engajar, que não avançam a arca. Ideias e roteiros: [`docs/roteiros-avulsos.md`](docs/roteiros-avulsos.md).

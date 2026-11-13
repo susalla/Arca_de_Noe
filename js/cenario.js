@@ -121,6 +121,7 @@ export class Cenario {
     }
     pilha.position.set(-7.5, 0, 8);
     pilha.rotation.y = 0.3;
+    this.pilha = pilha;
     this.cena.add(pilha);
   }
 

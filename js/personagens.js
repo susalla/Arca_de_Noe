@@ -392,6 +392,10 @@ export const TIPOS_DE_ANIMAIS = {
   flamingo:     { emoji: '🦩', passaro: true, tamanho: 1.0, cor: '#f48fb1', corCabeca: '#f48fb1', bico: '#2b2b2b', asa: '#ec6f9c', pernaLonga: '#f06292', pescocoLongo: true },
   bicodesapato: { emoji: '🐦', passaro: true, tamanho: 1.2, cor: '#8c97a3', corCabeca: '#9aa4ae', bico: '#c8b27a', asa: '#6f7a86', bicoSapato: true, pernaLonga: '#3a3a3a' },
   queroquero:   { emoji: '🐦', passaro: true, tamanho: 0.8, cor: '#b8b4a8', corCabeca: '#cfccc2', peito: '#1e1e1e', bico: '#d84b3a', asa: '#8a8678', pernaLonga: '#d84b3a' },
+  // Vídeo 06: os insistentes
+  arara:        { emoji: '🦜', passaro: true, tamanho: 0.9, cor: '#d62d20', corCabeca: '#d62d20', bico: '#efe8d8', asa: '#1f5fd1', listras: '#f2c200', caudaLonga: '#d62d20' },
+  lobo:         { emoji: '🐺', corpo: [1.15, 0.5, 0.42], perna: 0.55, pescoco: 0.28, cabeca: 0.36, cor: '#7d7f86', corCabeca: '#8e9097', focinho: 0.26, orelhinhas: true, raboLongo: 0.75 },
+  maracaja:     { emoji: '🐆', corpo: [0.85, 0.36, 0.32], perna: 0.3, pescoco: 0.12, cabeca: 0.3, cor: '#c99a52', manchas: '#3a2410', manchasQtd: 12, orelhinhas: true, raboLongo: 0.75 },
 };
 
 // Pássaro low-poly, de frente para +x (como os outros animais), com asas que batem.
@@ -462,7 +466,9 @@ export function criarPassaro(p) {
     g.add(pivo);
     return pivo;
   });
-  const cauda = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.05, 0.28), mat(p.asa));
+  const cauda = p.caudaLonga // arara: cauda comprida e fina
+    ? new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.04, 0.16).translate(-0.3, 0, 0), mat(p.caudaLonga))
+    : new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.05, 0.28), mat(p.asa));
   cauda.position.set(-0.48, 0.52, 0);
   cauda.rotation.z = 0.25;
   g.add(cauda);
@@ -831,5 +837,197 @@ export function criarTardigrado() {
     olho.position.set(l * 0.045, 0.16, 0.17);
     g.add(olho);
   }
+  return sombra(g);
+}
+
+// ----------------------------------------------------------- T-rex
+// O dinossauro ajudante do vídeo 06. Olha para +x (como os animais), ~5,5 m de altura.
+// userData: cabeca (grupo), mandibula (abre com rotation.z), bracos (bracinhos curtos), pernas (pivôs do quadril).
+export function criarTrex() {
+  const g = new THREE.Group();
+  const pele = mat('#5f7d3c');
+  const barriga = mat('#cbbd8c');
+  const escuro = mat('#3f5628');
+  const corpo = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 8), pele);
+  corpo.scale.set(1.9, 1.15, 1.05);
+  corpo.position.set(0, 3.1, 0);
+  corpo.rotation.z = 0.18;
+  const ventre = new THREE.Mesh(new THREE.SphereGeometry(0.9, 9, 7), barriga);
+  ventre.scale.set(1.6, 0.9, 0.85);
+  ventre.position.set(0.25, 2.8, 0);
+  g.add(corpo, ventre);
+  for (let i = 0; i < 7; i++) { // placas nas costas
+    const pl = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.38, 4), escuro);
+    pl.position.set(1.0 - i * 0.62, 4.25 - i * 0.1 - Math.max(0, i - 3) * 0.12, 0);
+    g.add(pl);
+  }
+  const pescoco = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.75, 1.3, 8), pele);
+  pescoco.position.set(1.55, 3.85, 0);
+  pescoco.rotation.z = -0.75;
+  g.add(pescoco);
+  // Cabeça (pivô na nuca)
+  const cabeca = new THREE.Group();
+  cabeca.position.set(2.0, 4.45, 0);
+  const cranio = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.8, 0.95), pele);
+  cranio.position.set(0.7, 0.15, 0);
+  const focinho = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.55, 0.8), pele);
+  focinho.position.set(1.65, 0.05, 0);
+  const sobrancelha = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.14, 1.05), escuro);
+  sobrancelha.position.set(0.45, 0.58, 0);
+  cabeca.add(cranio, focinho, sobrancelha);
+  for (const l of [-1, 1]) {
+    const olho = new THREE.Mesh(new THREE.SphereGeometry(0.11, 8, 6), mat('#f6d24a'));
+    olho.position.set(0.5, 0.38, l * 0.47);
+    const pupila = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.16, 0.04), mat('#111'));
+    pupila.position.set(0.56, 0.38, l * 0.55);
+    const narina = new THREE.Mesh(new THREE.SphereGeometry(0.05, 5, 4), mat('#222'));
+    narina.position.set(1.95, 0.25, l * 0.22);
+    cabeca.add(olho, pupila, narina);
+  }
+  for (let i = 0; i < 7; i++) for (const l of [-1, 1]) { // dentes de cima
+    const d = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.2, 4), mat('#f4f1e6'));
+    d.rotation.x = Math.PI;
+    d.position.set(0.55 + i * 0.22, -0.32, l * 0.36);
+    cabeca.add(d);
+  }
+  const mandibula = new THREE.Group();
+  mandibula.position.set(0.1, -0.25, 0);
+  const queixo = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.3, 0.8), pele);
+  queixo.position.set(0.95, -0.16, 0);
+  const lingua = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 0.5), mat('#c0392b'));
+  lingua.position.set(0.9, 0.02, 0);
+  mandibula.add(queixo, lingua);
+  for (let i = 0; i < 6; i++) for (const l of [-1, 1]) {
+    const d = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.17, 4), mat('#f4f1e6'));
+    d.position.set(0.55 + i * 0.22, 0.06, l * 0.32);
+    mandibula.add(d);
+  }
+  cabeca.add(mandibula);
+  g.add(cabeca);
+  // Bracinhos (a piada do vídeo)
+  const bracos = [-1, 1].map((l) => {
+    const pivo = new THREE.Group();
+    pivo.position.set(1.35, 3.2, l * 0.62);
+    const braco = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.55, 6).translate(0, -0.27, 0), pele);
+    braco.rotation.z = 0.9;
+    const mao = new THREE.Group();
+    mao.position.set(0.42, -0.32, 0);
+    for (const k of [-1, 1]) {
+      const garra = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.14, 4), mat('#f4f1e6'));
+      garra.rotation.z = -Math.PI / 2;
+      garra.position.set(0.06, 0, k * 0.05);
+      mao.add(garra);
+    }
+    pivo.add(braco, mao);
+    pivo.userData.mao = mao;
+    g.add(pivo);
+    return pivo;
+  });
+  // Pernas grossas (pivô no quadril)
+  const pernas = [-1, 1].map((l) => {
+    const pivo = new THREE.Group();
+    pivo.position.set(-0.3, 2.9, l * 0.75);
+    const coxa = new THREE.Mesh(new THREE.BoxGeometry(0.95, 1.5, 0.6).translate(0.05, -0.55, 0), pele);
+    const canela = new THREE.Mesh(new THREE.BoxGeometry(0.45, 1.4, 0.45).translate(-0.15, -1.7, 0), pele);
+    const pe = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.3, 0.6).translate(0.15, -2.75, 0), escuro);
+    pivo.add(coxa, canela, pe);
+    for (const k of [-1, 0, 1]) {
+      const garra = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.25, 4), mat('#e8e2d0'));
+      garra.rotation.z = -Math.PI / 2;
+      garra.position.set(0.75, -2.8, k * 0.2);
+      pivo.add(garra);
+    }
+    g.add(pivo);
+    return pivo;
+  });
+  // Rabo comprido
+  const rabo = new THREE.Mesh(new THREE.ConeGeometry(0.75, 4.2, 8), pele);
+  rabo.rotation.z = Math.PI / 2 - 0.22;
+  rabo.position.set(-3.4, 3.2, 0);
+  g.add(rabo);
+  g.userData.cabeca = cabeca;
+  g.userData.mandibula = mandibula;
+  g.userData.bracos = bracos;
+  g.userData.pernas = pernas;
+  return sombra(g);
+}
+
+// ---------------------------------------------------------- Dragão
+// O segurança da arca (vídeo 06): rosa com asas laranjas, como pediram nos comentários.
+// Olha para +x. As asas seguem a convenção dos pássaros, então baterAsas() funciona.
+export function criarDragao() {
+  const g = new THREE.Group();
+  const pele = mat('#f48fb1');
+  const barriga = mat('#ffd1e0');
+  const asaMat = mat('#ff8a1e', { side: THREE.DoubleSide });
+  const chifre = mat('#fff3e0');
+  const corpo = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 8), pele);
+  corpo.scale.set(1.7, 1.0, 1.0);
+  corpo.position.set(0, 1.9, 0);
+  const ventre = new THREE.Mesh(new THREE.SphereGeometry(0.85, 9, 7), barriga);
+  ventre.scale.set(1.5, 0.8, 0.85);
+  ventre.position.set(0.2, 1.65, 0);
+  g.add(corpo, ventre);
+  for (const [sx, sz] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+    const perna = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1.3, 0.4).translate(0, -0.65, 0), pele);
+    perna.position.set(sx * 0.9, 1.4, sz * 0.6);
+    g.add(perna);
+  }
+  const pescoco = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.55, 1.6, 8), pele);
+  pescoco.position.set(1.5, 2.8, 0);
+  pescoco.rotation.z = -0.55;
+  g.add(pescoco);
+  const cabeca = new THREE.Group();
+  cabeca.position.set(2.05, 3.55, 0);
+  const cranio = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.7), pele);
+  cranio.position.set(0.3, 0, 0);
+  const focinho = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.55), pele);
+  focinho.position.set(0.95, -0.08, 0);
+  cabeca.add(cranio, focinho);
+  for (const l of [-1, 1]) {
+    const c = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.55, 5), chifre);
+    c.position.set(0.05, 0.45, l * 0.22);
+    c.rotation.z = 0.6;
+    const olho = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), mat('#ffe14a', { emissive: '#ffb300', emissiveIntensity: 0.6 }));
+    olho.position.set(0.5, 0.16, l * 0.33);
+    const pupila = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.13, 0.03), mat('#111'));
+    pupila.position.set(0.56, 0.16, l * 0.4);
+    const narina = new THREE.Mesh(new THREE.SphereGeometry(0.045, 5, 4), mat('#8a3050'));
+    narina.position.set(1.3, 0.05, l * 0.14);
+    cabeca.add(c, olho, pupila, narina);
+  }
+  for (let i = 0; i < 6; i++) { // crista
+    const cr = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.32, 4), mat('#ff8a1e'));
+    cr.position.set(0.8 - i * 0.55, 2.95 - Math.abs(i - 1) * 0.08, 0);
+    g.add(cr);
+  }
+  g.add(cabeca);
+  const asas = [-1, 1].map((lado) => {
+    const pivo = new THREE.Group();
+    pivo.position.set(0.3, 2.6, lado * 0.6);
+    const forma = new THREE.Shape();
+    forma.moveTo(0, 0); forma.lineTo(1.0, 3.2); forma.lineTo(-0.4, 2.6); forma.lineTo(-1.2, 2.9); forma.lineTo(-1.6, 1.6); forma.lineTo(-2.2, 1.2); forma.lineTo(-0.8, 0);
+    const membrana = new THREE.Mesh(new THREE.ShapeGeometry(forma), asaMat);
+    membrana.rotation.x = lado * Math.PI / 2; // estende para o lado (em z)
+    const osso = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 3.3, 5).translate(0, 1.65, 0), pele);
+    osso.rotation.set(lado * Math.PI / 2, 0, -0.3 * lado * 0);
+    osso.rotation.z = 0;
+    osso.position.set(0.3, 0, 0);
+    osso.rotation.x = lado * Math.PI / 2;
+    osso.rotateOnAxis(new THREE.Vector3(0, 0, 1), -0.3);
+    pivo.add(membrana, osso);
+    pivo.userData.lado = lado;
+    g.add(pivo);
+    return pivo;
+  });
+  const rabo = new THREE.Mesh(new THREE.ConeGeometry(0.45, 3.0, 7), pele);
+  rabo.rotation.z = Math.PI / 2 + 0.25;
+  rabo.position.set(-2.8, 1.5, 0);
+  const ponta = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.5, 4), mat('#ff8a1e'));
+  ponta.rotation.z = Math.PI / 2;
+  ponta.position.set(-4.3, 1.15, 0);
+  g.add(rabo, ponta);
+  g.userData.asas = asas;
+  g.userData.cabeca = cabeca;
   return sombra(g);
 }

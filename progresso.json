@@ -1,22 +1,22 @@
 {
-  "dia": 5,
+  "dia": 6,
   "perfil": "@arca_do_noee",
-  "seguidores": 1700,
-  "seguidoresOntem": 378,
+  "seguidores": 2700,
+  "seguidoresOntem": 1700,
   "meta": 10000,
   "novosAjudantes": [
-    "@henriquebotelho_vieira",
-    "@heitor_cristhian",
-    "@nunu_zinha3",
-    "@karlasantoslara",
-    "@carlinhos_1983",
-    "@spam_do_show",
-    "@diaryof_dodoca",
-    "@monteiromimix",
-    "@ximendespomar",
-    "@_dudu.ofcx",
-    "@cmsilvaxx",
-    "@valentinnabernardini"
+    "@guilherme_lima.2310",
+    "@gabrielteixeira6191",
+    "@pedro_2015_22",
+    "@biel.x7_ga",
+    "@alyfergabrielcamargo",
+    "@maria_luiza02015",
+    "@neguim.031",
+    "@dinheiro854",
+    "@cofrinho2026",
+    "@gael_kk22",
+    "@sr_allan91",
+    "@pietranicolli124"
   ],
   "animais": [
     "jacare",
@@ -31,7 +31,10 @@
     "cachorro",
     "gato",
     "galinha",
-    "cavalo"
+    "cavalo",
+    "arara",
+    "lobo",
+    "maracaja"
   ],
   "animaisOntem": [
     "jacare",
@@ -43,6 +46,9 @@
     "picapau",
     "pantera",
     "leao",
-    "cachorro"
+    "cachorro",
+    "gato",
+    "galinha",
+    "cavalo"
   ]
 }
