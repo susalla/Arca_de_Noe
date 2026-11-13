@@ -176,7 +176,7 @@ if (existsSync(NARRACAO)) {
   console.log('Sem voz: rode antes  node scripts/narracao.mjs --video=06');
   filtros.push(`[efeitos]anull[mix]`);
 }
-filtros.push(`[mix]loudnorm=I=-14:TP=-1.5:LRA=11,aresample=${SR},atrim=0:${D}[saida]`);
+filtros.push(`[mix]loudnorm=I=-12.5:TP=-1.5:LRA=11,aresample=${SR},atrim=0:${D}[saida]`);
 rodar('ffmpeg', ['-y', '-loglevel', 'error', ...entradas, '-filter_complex', filtros.join(';'), '-map', '[saida]', '-ac', '2', TRILHA]);
 
 const VIDEO = resolve(VIDEOS, 'video-06.mp4');
