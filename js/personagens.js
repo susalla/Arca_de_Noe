@@ -396,6 +396,9 @@ export const TIPOS_DE_ANIMAIS = {
   arara:        { emoji: '🦜', passaro: true, tamanho: 0.9, cor: '#d62d20', corCabeca: '#d62d20', bico: '#efe8d8', asa: '#1f5fd1', listras: '#f2c200', caudaLonga: '#d62d20' },
   lobo:         { emoji: '🐺', corpo: [1.15, 0.5, 0.42], perna: 0.55, pescoco: 0.28, cabeca: 0.36, cor: '#7d7f86', corCabeca: '#8e9097', focinho: 0.26, orelhinhas: true, raboLongo: 0.75 },
   maracaja:     { emoji: '🐆', corpo: [0.85, 0.36, 0.32], perna: 0.3, pescoco: 0.12, cabeca: 0.3, cor: '#c99a52', manchas: '#3a2410', manchasQtd: 12, orelhinhas: true, raboLongo: 0.75 },
+  // Noé responde #2
+  orangotango:  { emoji: '🦧', primata: true, tamanho: 1.15, cor: '#c4621f', rosto: '#7a4a2e' },
+  balancarabo:  { emoji: '🐦', passaro: true, tamanho: 0.5, cor: '#8fa3b8', corCabeca: '#8fa3b8', peito: '#f4f4f4', bico: '#222', asa: '#5f6f80', caudaLonga: '#2b2b2b' },
 };
 
 // Pássaro low-poly, de frente para +x (como os outros animais), com asas que batem.
@@ -485,6 +488,7 @@ export function criarPassaro(p) {
   }
   g.scale.setScalar(e);
   g.userData.asas = asas;
+  g.userData.cauda = cauda;
   g.userData.cabeca = cabeca;
   g.userData.pernas = [];
   g.userData.patas = pernas;

@@ -106,6 +106,8 @@ a madeira, a transformação de anime, o esqueleto completo com as primeiras tá
 
 ## Vídeos avulsos (fora da obra)
 
+- **Noé responde #2:** [`docs/roteiro-responde-2.md`](docs/roteiro-responde-2.md), gere com `npm run video:responde2`.
+
 Vídeos só para engajar, que não avançam a arca. Ideias e roteiros: [`docs/roteiros-avulsos.md`](docs/roteiros-avulsos.md).
 
 - **POV "barco a 500 km do mar"** (Noé + Vizinho, duas vozes): [`docs/roteiro-avulso-pov.md`](docs/roteiro-avulso-pov.md).

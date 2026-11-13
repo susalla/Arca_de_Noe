@@ -99,6 +99,7 @@ Atualizado em 13/11/2026 (vídeo 06). Branch de trabalho: `claude/eloquent-hypat
 | Avulso | "Noé responde comentários #1" | 50 s | `npm run video:responde1` | `docs/roteiro-responde-1.md` |
 | 05 | "O traidor da arca" | 54 s | `npm run video:05` | `docs/roteiro-video-05.md` |
 | 06 | "O roubo da madeira" | 72,5 s | `npm run video:06` | `docs/roteiro-video-06.md` |
+| Avulso | "Noé responde comentários #2" | 63 s | `npm run video:responde2` | `docs/roteiro-responde-2.md` |
 
 Cada comando tem a variante `:audio`, que refaz só a voz e a trilha e reaproveita a imagem gravada. Saídas: `videos/<nome>.mp4` e `videos/<nome>-capa.jpg`.
 
@@ -170,7 +171,7 @@ As legendas prontas e os comentários fixados de cada vídeo estão no respectiv
   - **T-rex:** @vvgh_244 ("dia 2 pedindo").
   - **Espinossauro:** @lor.enzo_cardo.so.
   - **Dinossauro:** @nycollasazevedocorreia e @pedro_2015_22.
-- **Noé responde #2:** foi prometido no #1 ("no próximo eu leio o seu").
+- **Noé responde #2:** feito (unicórnio versão obra, sobrinho Jafé, orangotango, balança-rabo-leitoso, barata gamer, disco voador, golira-Golias, basilisco, peixe gigante). O cupim virou pedra e piscou no final; o #3 foi prometido. Guardados para o #3: efelonte, babuíno da bunda dourada, tubarão fora d'água, jacaré comendo banana e ajudante de roupa rosa.
 - **O cupim:** continua rondando a obra.
 
 ### Comentários bons que ainda não foram usados

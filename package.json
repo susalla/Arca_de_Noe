@@ -21,6 +21,8 @@
     "video:05": "node scripts/narracao.mjs --video=05 && node scripts/video05.mjs",
     "video:05:audio": "node scripts/narracao.mjs --video=05 && node scripts/video05.mjs --so-audio",
     "video:06": "node scripts/narracao.mjs --video=06 && node scripts/video06.mjs",
-    "video:06:audio": "node scripts/narracao.mjs --video=06 && node scripts/video06.mjs --so-audio"
+    "video:06:audio": "node scripts/narracao.mjs --video=06 && node scripts/video06.mjs --so-audio",
+    "video:responde2": "node scripts/narracao.mjs --video=responde2 && node scripts/responde2.mjs",
+    "video:responde2:audio": "node scripts/narracao.mjs --video=responde2 && node scripts/responde2.mjs --so-audio"
   }
 }
