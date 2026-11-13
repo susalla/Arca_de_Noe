@@ -2,7 +2,7 @@
 // no tempo da legenda correspondente (js/trailer-tempos.js → FALAS).
 // Resultado: audio/narracao.mp3 (usado por scripts/trailer.mjs).
 //
-// Uso: node scripts/narracao.mjs [--video=02] [--voz=VOICE_ID] [--refazer]
+// Uso: node scripts/narracao.mjs [--video=02|avulso-pov] [--voz=VOICE_ID] [--refazer]
 //   --video=01 (padrão): js/trailer-tempos.js → audio/narracao.mp3 + audio/narracao-palavras.json
 //   --video=NN:          js/videoNN-tempos.js → audio/videoNN-narracao.mp3 + audio/videoNN-palavras.json
 // A chave vem de ELEVENLABS_API_KEY. Neste ambiente de nuvem ela é injetada
@@ -23,19 +23,23 @@ const CHAVE = process.env.ELEVENLABS_API_KEY || 'proxy-injected';
 // Falas, tempos e interpretação vêm da linha do tempo do vídeo (fonte única)
 const VIDEO = String(args.video || '01').padStart(2, '0');
 const PRIMEIRO = VIDEO === '01';
-const TEMPOS = await import(PRIMEIRO ? '../js/trailer-tempos.js' : `../js/video${VIDEO}-tempos.js`);
-const SAIDA_VOZ = resolve(RAIZ, PRIMEIRO ? 'audio/narracao.mp3' : `audio/video${VIDEO}-narracao.mp3`);
-const SAIDA_PALAVRAS = resolve(RAIZ, PRIMEIRO ? 'audio/narracao-palavras.json' : `audio/video${VIDEO}-palavras.json`);
+// Vídeos numerados usam o prefixo "video" (video03-tempos.js); avulsos usam o próprio nome (avulso-pov-tempos.js)
+const NOME = /^\d+$/.test(VIDEO) ? `video${VIDEO}` : VIDEO;
+const TEMPOS = await import(PRIMEIRO ? '../js/trailer-tempos.js' : `../js/${NOME}-tempos.js`);
+const SAIDA_VOZ = resolve(RAIZ, PRIMEIRO ? 'audio/narracao.mp3' : `audio/${NOME}-narracao.mp3`);
+const SAIDA_PALAVRAS = resolve(RAIZ, PRIMEIRO ? 'audio/narracao-palavras.json' : `audio/${NOME}-palavras.json`);
 const DURACAO = TEMPOS.DURACAO;
 const FALAS = TEMPOS.FALAS.map(([ini, fim, legenda, falado]) => [ini, fim, falado || legenda.replaceAll('*', '').replaceAll('…', '...')]);
 const ESTILO = TEMPOS.INTERPRETACAO;
+// Vídeos com mais de um personagem: VOZES diz quem fala cada fala e VOZ_IDS dá a voz de cada um
+const vozDa = (i) => (TEMPOS.VOZES && !args.voz ? TEMPOS.VOZ_IDS[TEMPOS.VOZES[i]] : VOZ);
 
 const duracaoDe = (arq) => Number(spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', arq]).stdout.toString().trim());
 
 function gerar(i) {
   // O nome do arquivo depende do texto, da voz e da interpretação:
   // só gera de novo (e gasta créditos) o que mudou.
-  const id = createHash('sha1').update(JSON.stringify([FALAS[i][2], VOZ, ESTILO[i]])).digest('hex').slice(0, 10);
+  const id = createHash('sha1').update(JSON.stringify([FALAS[i][2], vozDa(i), ESTILO[i]])).digest('hex').slice(0, 10);
   const arq = resolve(PASTA, `fala-${id}.mp3`);
   if (existsSync(arq) && !args.refazer) return arq;
   const corpo = JSON.stringify({
@@ -48,7 +52,7 @@ function gerar(i) {
   });
   // curl respeita HTTPS_PROXY e os certificados do sistema em qualquer máquina
   const r = spawnSync('curl', ['-sS', '-o', arq, '-w', '%{http_code}', '-X', 'POST',
-    `https://api.elevenlabs.io/v1/text-to-speech/${VOZ}?output_format=mp3_44100_128`,
+    `https://api.elevenlabs.io/v1/text-to-speech/${vozDa(i)}?output_format=mp3_44100_128`,
     '-H', `xi-api-key: ${CHAVE}`, '-H', 'Content-Type: application/json', '--data-binary', '@-'], { input: corpo });
   const status = r.stdout.toString().trim();
   if (status !== '200') {

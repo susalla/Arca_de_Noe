@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arca do Noé: POV barco longe do mar</title>
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js" } }
+  </script>
+  <style>
+    :root { --amarelo: #ffd23f; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+    body { font-family: "DejaVu Sans", "Trebuchet MS", system-ui, sans-serif; color: #fff; }
+    #palco { position: relative; width: 540px; height: 960px; margin: 0 auto; overflow: hidden; }
+    canvas { display: block; width: 540px; height: 960px; }
+    .camada { position: absolute; inset: 0; pointer-events: none; }
+    #escuro { opacity: 0; background: linear-gradient(#0b1020, #1a2332 55%, #0d1418); mix-blend-mode: multiply; }
+    #sol { opacity: 0; background: radial-gradient(circle at 85% 8%, rgba(255,236,170,.55), transparent 55%); mix-blend-mode: screen; }
+    #ouro { opacity: 0; background: radial-gradient(circle at 60% 50%, rgba(255,215,106,.5), transparent 60%); mix-blend-mode: screen; }
+    #flash { opacity: 0; background: #eef4ff; }
+    #vinheta { background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.5) 100%); }
+
+    /* Texto do POV no estilo das legendas do TikTok/Reels */
+    #pov { position: absolute; left: 50%; top: 92px; width: 440px; transform: translateX(-50%); text-align: center; opacity: 0; }
+    #pov span { display: inline; padding: 4px 10px; line-height: 1.62; font-size: 25px; font-weight: 800; color: #111;
+      background: #fff; border-radius: 8px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+
+    /* Tela preta "ALGUM TEMPO DEPOIS…" */
+    #preto { opacity: 0; background: #000; display: flex; align-items: center; justify-content: center; }
+    #preto div { width: 100%; text-align: center; font-weight: 900; font-size: 38px; letter-spacing: .06em; color: #fff; }
+
+    #topo { position: absolute; top: 60px; left: 0; right: 0; text-align: center; }
+    .pilula { display: inline-block; padding: 7px 18px; border-radius: 999px; font-weight: 800; }
+    #segue { background: rgba(46,125,50,.95); font-size: 19px; opacity: 0; }
+    #contador { position: absolute; left: 0; right: 0; top: 150px; text-align: center; opacity: 0; transform-origin: 50% 50%; }
+    #contador, #contador span { font-weight: 900; }
+    #contadorTexto { display: inline-block; padding: 9px 20px; border-radius: 999px; font-size: 25px; background: rgba(46,125,50,.95); border: 3px solid #ffd23f; }
+    /* Visão: bordas claras e tom dourado */
+    #visao { opacity: 0; background: radial-gradient(ellipse at center, rgba(255,226,140,.18) 35%, rgba(255,246,214,.92) 100%); mix-blend-mode: screen; }
+
+    /* Quem está falando + legenda */
+    #falante { position: absolute; left: 0; right: 0; top: 626px; text-align: center; opacity: 0; }
+    #falante span { display: inline-block; padding: 3px 12px; border-radius: 8px; font-weight: 900; font-size: 16px; letter-spacing: .08em; color: #111; }
+    #legenda { position: absolute; left: 36px; right: 64px; top: 664px; text-align: center;
+      font-weight: 900; font-size: 30px; line-height: 1.14; text-transform: uppercase;
+      paint-order: stroke fill; -webkit-text-stroke: 7px #000; transform-origin: 50% 50%; }
+    #legenda .p { display: inline-block; margin: 0 .12em; }
+    #legenda .em { color: var(--amarelo); }
+
+    #cartao { position: absolute; left: 50%; top: 250px; width: 400px; transform: translateX(-50%) scale(0);
+      background: #fff; color: #111; border-radius: 24px; padding: 20px 20px 22px; text-align: center; box-shadow: 0 18px 50px rgba(0,0,0,.55); }
+    #cartao .avatar { width: 150px; height: 150px; border-radius: 50%; margin: -86px auto 10px; padding: 5px;
+      background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+    #cartao .avatar img { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #fff; display: block; object-fit: cover; }
+    #cartao .nome { font-weight: 900; font-size: 26px; }
+    #cartao .bio { font-size: 16px; color: #555; margin-top: 4px; }
+    #cartao .botao { margin-top: 14px; background: #0095f6; color: #fff; font-weight: 900; font-size: 24px; border-radius: 14px; padding: 11px 0; }
+    #cursor { position: absolute; font-size: 50px; left: 315px; top: 445px; opacity: 0; }
+    #recado { position: absolute; left: 40px; right: 64px; top: 548px; text-align: center; opacity: 0;
+      padding: 10px 14px; border-radius: 16px; background: rgba(0,0,0,.62); font-weight: 900; font-size: 24px; line-height: 1.25; }
+  </style>
+</head>
+<body>
+  <div id="palco">
+    <canvas id="cena"></canvas>
+    <div id="escuro" class="camada"></div>
+    <div id="sol" class="camada"></div>
+    <div id="ouro" class="camada"></div>
+    <div id="vinheta" class="camada"></div>
+    <div id="visao" class="camada"></div>
+    <div id="flash" class="camada"></div>
+    <div id="pov"><span>POV: você tá construindo um barco a 500 km do mar 🌊❌</span></div>
+    <div id="topo"><span id="segue" class="pilula">🎉 PRÓXIMO VÍDEO: 200 AJUDANTES</span></div>
+    <div id="contador"><span id="contadorTexto"></span></div>
+    <div id="falante"><span></span></div>
+    <div id="legenda"></div>
+    <div id="cartao">
+      <div class="avatar"><img src="assets/perfil.jpg" alt="Noé"></div>
+      <div class="nome">@arca_do_noee</div>
+      <div class="bio">Siga e vire ajudante na obra 🔨</div>
+      <div class="botao">Seguir</div>
+    </div>
+    <div id="cursor">👆</div>
+    <div id="recado">VIZINHO 😂 ou AJUDANTE 🔨? Comenta 👇</div>
+    <div id="preto" class="camada"><div>ALGUM TEMPO DEPOIS…</div></div>
+  </div>
+  <script type="module" src="js/avulso-pov.js"></script>
+</body>
+</html>

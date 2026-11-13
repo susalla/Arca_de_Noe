@@ -11,6 +11,14 @@
     "video:02": "node scripts/narracao.mjs --video=02 && node scripts/video02.mjs",
     "video:02:audio": "node scripts/narracao.mjs --video=02 && node scripts/video02.mjs --so-audio",
     "video:03": "node scripts/narracao.mjs --video=03 && node scripts/video03.mjs",
-    "video:03:audio": "node scripts/narracao.mjs --video=03 && node scripts/video03.mjs --so-audio"
+    "video:03:audio": "node scripts/narracao.mjs --video=03 && node scripts/video03.mjs --so-audio",
+    "video:pov": "node scripts/narracao.mjs --video=avulso-pov && node scripts/avulso-pov.mjs",
+    "video:pov:audio": "node scripts/narracao.mjs --video=avulso-pov && node scripts/avulso-pov.mjs --so-audio",
+    "video:04": "node scripts/narracao.mjs --video=04 && node scripts/video04.mjs",
+    "video:04:audio": "node scripts/narracao.mjs --video=04 && node scripts/video04.mjs --so-audio",
+    "video:responde1": "node scripts/narracao.mjs --video=responde1 && node scripts/responde1.mjs",
+    "video:responde1:audio": "node scripts/narracao.mjs --video=responde1 && node scripts/responde1.mjs --so-audio",
+    "video:05": "node scripts/narracao.mjs --video=05 && node scripts/video05.mjs",
+    "video:05:audio": "node scripts/narracao.mjs --video=05 && node scripts/video05.mjs --so-audio"
   }
 }

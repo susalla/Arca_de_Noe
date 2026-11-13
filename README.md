@@ -9,8 +9,8 @@ os ajudantes aparecem em volta da obra e, no fim, os animais chegam em casais.
 - **Ajudantes:** um bonequinho para cada seguidor (até 600 desenhados na tela; o contador continua acima disso).
 - **Arca:** 55 peças, em ordem de construção: suportes → quilha → fundo → 11 costelas → 32 tábuas →
   convés → cabine → janelas → telhado → porta → rampa. Cada peça é liberada ao atingir um número de seguidores.
-  A curva é quadrática: no começo poucos seguidores já mostram progresso (a 1ª peça sai com 1 seguidor,
-  a 10ª com ~330), e a arca fica pronta na `meta` (padrão: 10.000).
+  A curva é quase linear (`EXPOENTE_CURVA = 1.25` em `js/arca.js`): uma peça a cada ~180 seguidores,
+  e a arca fica pronta na `meta` (padrão: 10.000). Com 1700 seguidores são 13 peças (até a 10ª costela).
 - **Clima:** o céu vai escurecendo conforme a arca fica pronta. O dilúvio está chegando!
 - **Animais:** você escolhe quais casais entram, em `progresso.json`.
 - **Nomes:** os @ dos novos ajudantes do dia aparecem flutuando sobre eles.
@@ -85,6 +85,27 @@ Roteiro e legenda: [`docs/roteiro-video-02.md`](docs/roteiro-video-02.md). Gere 
 **Padrão da série:** um único `.mp4` por vídeo (1080×1920, H.264, AAC 48 kHz) para Instagram e TikTok;
 legenda palavra por palavra, menor e na parte de baixo, fora das áreas cobertas pelos botões do app;
 cada vídeo é um "dia da obra" (o tempo é relativo onde o Noé está).
+
+## Vídeo 04: "Era pra ser 200… chegaram 378!"
+
+Roteiro e legenda: [`docs/roteiro-video-04.md`](docs/roteiro-video-04.md). Gere com `npm run video:04`
+(saída: `videos/video-04.mp4` + capa). Os comentários aparecem como cartão de texto (@ + comentário),
+e os 100 seguidores mais novos sobem na tela como créditos.
+
+## Vídeo 05: "O traidor da arca"
+
+Roteiro e legenda: [`docs/roteiro-video-05.md`](docs/roteiro-video-05.md). Gere com `npm run video:05`
+(saída: `videos/video-05.mp4` + capa). Mistério do buraco, fila de suspeitos, harpia trazendo as costelas 8 a 10
+e cena pós-créditos com a pegada de T-rex.
+
+## Vídeos avulsos (fora da obra)
+
+Vídeos só para engajar, que não avançam a arca. Ideias e roteiros: [`docs/roteiros-avulsos.md`](docs/roteiros-avulsos.md).
+
+- **POV "barco a 500 km do mar"** (Noé + Vizinho, duas vozes): [`docs/roteiro-avulso-pov.md`](docs/roteiro-avulso-pov.md).
+  Gere com `npm run video:pov` (saída: `videos/avulso-pov.mp4` + capa).
+- **Noé responde comentários #1:** [`docs/roteiro-responde-1.md`](docs/roteiro-responde-1.md).
+  Gere com `npm run video:responde1` (saída: `videos/responde-1.mp4` + capa).
 
 ## Rodar localmente
 
