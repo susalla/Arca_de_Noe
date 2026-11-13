@@ -150,7 +150,7 @@ if (existsSync(NARRACAO)) {
   console.log('Sem voz: rode antes  node scripts/narracao.mjs --video=responde2');
   filtros.push(`[efeitos]anull[mix]`);
 }
-filtros.push(`[mix]loudnorm=I=-12.5:TP=-1.5:LRA=11,aresample=${SR},atrim=0:${D}[saida]`);
+filtros.push(`[mix]loudnorm=I=-14.5:TP=-1.5:LRA=11,aresample=${SR},atrim=0:${D}[saida]`);
 rodar('ffmpeg', ['-y', '-loglevel', 'error', ...entradas, '-filter_complex', filtros.join(';'), '-map', '[saida]', '-ac', '2', TRILHA]);
 
 const VIDEO = resolve(VIDEOS, 'responde-2.mp4');
@@ -163,7 +163,7 @@ rodar('ffmpeg', ['-y', '-loglevel', 'error', '-i', IMAGEM, '-i', TRILHA,
 const CAPA = resolve(VIDEOS, 'responde-2-capa.jpg');
 const ttf = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
 rodar('ffmpeg', ['-y', '-loglevel', 'error', '-ss', String(M.tapaOlhos - 0.4), '-i', IMAGEM, '-frames:v', '1',
-  '-vf', `drawbox=y=ih*0.6:w=iw:h=ih*0.2:color=black@0.6:t=fill,` +
+  '-vf', `drawbox=y=ih*0.6:w=iw:h=ih*0.2:color=black@0.9:t=fill,` +
     `drawtext=fontfile=${ttf}:text='NOÉ RESPONDE #2':fontcolor=white:fontsize=84:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.62,` +
     `drawtext=fontfile=${ttf}:text='NÃO OLHA NO OLHO!':fontcolor=0xffd23f:fontsize=86:borderw=8:bordercolor=black:x=(w-tw)/2:y=h*0.70`,
   '-q:v', '2', CAPA]);
